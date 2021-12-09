@@ -40,7 +40,7 @@ namespace MCCompilerConsole.Converter.Assembler
             preprocessor = new Preprocessor(assembleArgs);
             codeGenerater = new CodeGenerater(assembleArgs);
             linker = new Linker(assembleArgs);
-            errorData = new ErrorData(@"\Text\error_text_assemble.csv");
+            errorData = new ErrorData(@"\error_text_assemble.csv");
             result = new AssembleResult();
         }
 

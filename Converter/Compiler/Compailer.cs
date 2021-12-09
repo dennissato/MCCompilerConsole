@@ -15,7 +15,7 @@ namespace MCCompilerConsole.Converter.Compiler
             parser = new Parser(compileArgs);
             codeGenerater = new CodeGenerater(compileArgs);
             linker = new Linker(compileArgs);
-            errorData = new ErrorData(@"\Text\error_text_compile.csv");
+            errorData = new ErrorData(@"\error_text_compile.csv");
             result = new CompileResult();
         }
 

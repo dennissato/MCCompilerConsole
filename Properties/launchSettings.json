@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "MCCompilerConsole": {
+      "commandName": "Project",
+      "commandLineArgs": "a C:\\Users\\denni\\Desktop\\Release\\example（ドライブ用）\\test.mcs C:\\Users\\denni\\source\\repos\\MCCompilerConsole\\LogFile.txt JPN d \\mcas \\mcbin \\mc test test test test"
+    }
+  }
+}
