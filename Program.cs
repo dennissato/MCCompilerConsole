@@ -170,12 +170,20 @@ namespace MCCompilerConsole
                 // ログファイルの書き出し
                 using (StreamWriter sw = new StreamWriter(logFile, false))
                 {
-                    
                     sw.Write(consoleText.Str(CONSOLE_TEXT.EXCEPTION, e.ToString()));
                 }
             }
         }
 
+        /// <summary>
+        /// コンパイル＆アセンブル
+        /// </summary>
+        /// <param name="sourceFile">コンパイルするファイル(フルパス)</param>
+        /// <param name="mcasDirectory">.mcasファイルを入れるディレクトリ</param>
+        /// <param name="binDirectory">.binファイルを入れるディレクトリ</param>
+        /// <param name="mcDirectory">.mcファイルを入れるディレクトリ</param>
+        /// <param name="isRelease">リリースか</param>
+        /// <returns>コンパイル結果のログ</returns>
         private static string CompileAssemble(string sourceFile, string mcasDirectory, string binDirectory, string mcDirectory, bool isRelease)
         {
             if (File.Exists(sourceFile) && Path.GetExtension(sourceFile) == Define.McsEx)
@@ -184,7 +192,6 @@ namespace MCCompilerConsole
                 Assembler assembler = new Assembler();
 
                 // パスの作成
-                //var saveData = Properties.Settings.Default;
                 string directory = Path.GetDirectoryName(sourceFile);
 
                 // コンパイル
@@ -211,14 +218,22 @@ namespace MCCompilerConsole
             }
             return ConvertFialedLog(sourceFile, consoleText.Str(CONSOLE_TEXT.NOT_FOUND_FILE, sourceFile));
         }
-
+        
+        /// <summary>
+        /// アセンブル
+        /// </summary>
+        /// <param name="sourceFile">アセンブルするファイル</param>
+        /// <param name="binDirectory">.binファイルを入れるディレクトリ</param>
+        /// <param name="mcDirectory">.mcファイルを入れるディレクトリ</param>
+        /// <param name="isRelease">リリースか</param>
+        /// <returns>アセンブル結果のログ</returns>
         private static string Assemble(string sourceFile, string binDirectory, string mcDirectory, bool isRelease)
         {
             if (File.Exists(sourceFile) && Path.GetExtension(sourceFile) == Define.McasEx)
             {
                 Assembler assembler = new Assembler();
 
-                //var saveData = Properties.Settings.Default;
+                // アセンブル
                 Assembler.AssembleResult assembleResult = assembler.Do(sourceFile, binDirectory, mcDirectory, isRelease);
                 if (!assembleResult.Success)
                 {
@@ -233,6 +248,11 @@ namespace MCCompilerConsole
             return ConvertFialedLog(sourceFile, consoleText.Str(CONSOLE_TEXT.NOT_FOUND_FILE, sourceFile));
         }
 
+        /// <summary>
+        /// ディスアセンブル
+        /// </summary>
+        /// <param name="sourceFile">ディスアセンブルするファイル</param>
+        /// <returns>ディスアセンブル結果のログ</returns>
         private static string Disassembler(string sourceFile)
         {
             if (File.Exists(sourceFile))
@@ -255,12 +275,23 @@ namespace MCCompilerConsole
             return ConvertFialedLog(sourceFile, consoleText.Str(CONSOLE_TEXT.NOT_FOUND_FILE, sourceFile));
         }
 
+        /// <summary>
+        /// 成功ログの作成
+        /// </summary>
+        /// <param name="sourceFile">変化したファイル名</param>
+        /// <returns>成功ログ</returns>
         private static string ConvertSuccessLog(string sourceFile)
         {
             DateTime dt = DateTime.Now;
             return $"{dt}\n{sourceFile}\n{consoleText.Str(CONSOLE_TEXT.MAGIC_SUCCESS)}";
         }
 
+        /// <summary>
+        /// 失敗ログの作成
+        /// </summary>
+        /// <param name="sourceFile">変化したファイル名</param>
+        /// <param name="faileLog">失敗内容</param>
+        /// <returns>失敗ログ</returns>
         private static string ConvertFialedLog(string sourceFile, string faileLog)
         {
             DateTime dt = DateTime.Now;

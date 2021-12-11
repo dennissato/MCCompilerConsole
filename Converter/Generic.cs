@@ -4,42 +4,48 @@ namespace MCCompilerConsole.Converter
 {
     class Generic
     {
+        /// <summary>
+        /// バイト列を整数にする
+        /// bytesはビックエンディアン方式
+        /// システムアーキテクチャのエンディアンを考慮
+        /// </summary>
+        /// <param name="bytes">バイト列</param>
+        /// <returns>整数</returns>
         static public int ToInt32(byte[] bytes)
         {
-            // bytesはビックエンディアン方式
-            // システムアーキテクチャのエンディアンを考慮
             if (BitConverter.IsLittleEndian)
             {
                 Array.Reverse(bytes);
             }
             return BitConverter.ToInt32(bytes, 0);
         }
+
+        /// <summary>
+        /// バイト列を不動小数点にする
+        /// bytesはビックエンディアン方式
+        /// システムアーキテクチャのエンディアンを考慮
+        /// </summary>
+        /// <param name="bytes">バイト列</param>
+        /// <returns>不動小数点</returns>
         static public float ToFloat32(byte[] bytes)
         {
-            // bytesはビックエンディアン方式
-            // システムアーキテクチャのエンディアンを考慮
             if (BitConverter.IsLittleEndian)
             {
                 Array.Reverse(bytes);
             }
             return BitConverter.ToSingle(bytes, 0);
         }
+
+        /// <summary>
+        /// バイト列の取得
+        /// return bytesはビックエンディアン方式
+        /// システムアーキテクチャのエンディアンを考慮
+        /// </summary>
+        /// <param name="value">バイト列にする値</param>
+        /// <returns>バイト列</returns>
         static public byte[] GetByte(int value)
         {
             byte[] bytes = BitConverter.GetBytes(value);
-            // return bytesはビックエンディアン方式
-            // システムアーキテクチャのエンディアンを考慮
-            if (BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(bytes);
-            }
-            return bytes;
-        }
-        static public byte[] GetByte(uint value)
-        {
-            byte[] bytes = BitConverter.GetBytes(value);
-            // return bytesはビックエンディアン方式
-            // システムアーキテクチャのエンディアンを考慮
             if (BitConverter.IsLittleEndian)
             {
                 Array.Reverse(bytes);
@@ -47,6 +53,29 @@ namespace MCCompilerConsole.Converter
             return bytes;
         }
 
+        /// <summary>
+        /// バイト列の取得
+        /// return bytesはビックエンディアン方式
+        /// システムアーキテクチャのエンディアンを考慮
+        /// </summary>
+        /// <param name="value">バイト列にする値</param>
+        /// <returns>バイト列</returns>
+        static public byte[] GetByte(uint value)
+        {
+            byte[] bytes = BitConverter.GetBytes(value);
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(bytes);
+            }
+            return bytes;
+        }
+
+        /// <summary>
+        /// 引数用のレジスタ取得
+        /// </summary>
+        /// <param name="argNo">引数番号</param>
+        /// <param name="vk">引数のタイプ(プリミティブ型)</param>
+        /// <returns>レジスタ</returns>
         public static Operand GetArgRegister(int argNo, VariableKind vk)
         {
             if (vk == VariableKind.INT || vk == VariableKind.ARRAY || vk == VariableKind.STRUCT || vk == VariableKind.BOXS)
@@ -88,6 +117,11 @@ namespace MCCompilerConsole.Converter
             return Operand.INVALID;
         }
 
+        /// <summary>
+        /// リターン用レジスタ取得
+        /// </summary>
+        /// <param name="vk">リターンのタイプ(プリミティブ型)</param>
+        /// <returns>レジスタ</returns>
         public static Operand GetReturnRegister(VariableKind vk)
         {
             switch (vk)
@@ -99,6 +133,11 @@ namespace MCCompilerConsole.Converter
             return Operand.INVALID;
         }
 
+        /// <summary>
+        /// ミーモニックのオペランド数取得
+        /// </summary>
+        /// <param name="mnemonic">ニーモニック</param>
+        /// <returns>オペランド数</returns>
         public static int GetOperandByte(Mnemonic mnemonic)
         {
             switch (mnemonic)
@@ -177,6 +216,7 @@ namespace MCCompilerConsole.Converter
                     return 0xFF;
             }
         }
+
         static private readonly NodeKind[] ARG_NONE = { NodeKind.Other };
         static private readonly NodeKind[] ARG_INT = { NodeKind.INTEGER, };
         static private readonly NodeKind[] ARG_INT_INT = { NodeKind.INTEGER, NodeKind.INTEGER, };
@@ -306,9 +346,9 @@ namespace MCCompilerConsole.Converter
         /// <summary>
         /// GWSTの呼び出し形式の取得
         /// </summary>
-        /// <param name="tk"></param>
-        /// <param name="gwstNo"></param>
-        /// <returns></returns>
+        /// <param name="tk">gwstの種類</param>
+        /// <param name="gwstNo">gwstの番号</param>
+        /// <returns>引数の数, 戻り値型, 引数の種類</returns>
         static public (int ArgNum, VariableKind RetType, NodeKind[] ArgKinds) GWSTInfo(GWSTType tk, int gwstNo)
         {
             int num = 0;
@@ -387,6 +427,12 @@ namespace MCCompilerConsole.Converter
             }
             return (0, VariableKind.INVALID, null);
         }
+
+        /// <summary>
+        /// SYSの呼び出し形式の取得
+        /// </summary>
+        /// <param name="kind">sysのタイプ</param>
+        /// <returns>引数の数, 戻り値型, 引数の種類</returns>
         static public (int ArgNum, VariableKind RetType, NodeKind[] ArgKinds) SYSInfo(SystemKind kind)
         {
             foreach (var info in SYSCallInfo)
@@ -398,6 +444,12 @@ namespace MCCompilerConsole.Converter
             }
             return (0, VariableKind.INVALID, null);
         }
+
+        /// <summary>
+        /// 各GWSTの機能数取得
+        /// </summary>
+        /// <param name="type">gwstタイプ</param>
+        /// <returns>機能数の取得</returns>
         static public int GWSTInfoLength(GWSTType type)
         {
             switch (type)
@@ -424,12 +476,13 @@ namespace MCCompilerConsole.Converter
             }
             return 0;
         }
+
         /// <summary>
         /// ref時の引数の方取得
         /// </summary>
-        /// <param name="type"></param>
-        /// <param name="no"></param>
-        /// <returns></returns>
+        /// <param name="type">gwstタイプ</param>
+        /// <param name="no">番号</param>
+        /// <returns>引数</returns>
         static public VariableKind[] GwstCallRefArgInfo(GWSTType type, int no)
         {
             switch (type)
@@ -503,10 +556,23 @@ namespace MCCompilerConsole.Converter
             }
             return null;
         }
+
+        /// <summary>
+        /// ref時の引数の方取得
+        /// </summary>
+        /// <param name="kind">sysタイプ</param>
+        /// <returns>引数</returns>
         static public VariableKind[] SysCallRefArgInfo(SystemKind kind)
         {
             return null;    // refを引数にするのがnull返す
         }
+
+
+        /// <summary>
+        /// ref時の引数を文字列変換する
+        /// </summary>
+        /// <param name="refargs">ref時の引数</param>
+        /// <returns>文字列</returns>
         static public string GwstRefArgToString(VariableKind[] refargs)
         {
             string ret = "{\n";
@@ -518,7 +584,11 @@ namespace MCCompilerConsole.Converter
             return ret;
         }
 
-
+        /// <summary>
+        /// 変数タイプかチェック
+        /// </summary>
+        /// <param name="nodeKind">ノードの種類</param>
+        /// <returns>true:変数タイプ</returns>
         static public bool IsVariableKind(NodeKind nodeKind)
         {
             switch (nodeKind)
@@ -539,18 +609,23 @@ namespace MCCompilerConsole.Converter
             return false;
         }
 
+        /// <summary>
+        /// 有効な戻り値型かチェック
+        /// </summary>
+        /// <param name="vk">変数タイプ</param>
+        /// <returns>true:有効な戻り値型</returns>
         static public bool IsValidRetType(VariableKind vk)
         {
             return (vk != VariableKind.REFERENCE && vk != VariableKind.ARRAY && vk != VariableKind.STRUCT && vk != VariableKind.BOXS);
         }
 
         /// <summary>
-        /// ソースの指定場所の行番号と行文字を取得
+        /// ある文字列のソース内行番号と行文字を取得
         /// </summary>
-        /// <param name="source"></param>
-        /// <param name="strIdx"></param>
-        /// <param name="strLen"></param>
-        /// <returns></returns>
+        /// <param name="source">ソース</param>
+        /// <param name="strIdx">ある文字開始位置</param>
+        /// <param name="strLen">ある文字の文字数</param>
+        /// <returns>行文字, 行番号</returns>
         static public (string linestr, int lineNo) GetaSourceLineStrNo(in string source, int strIdx, int strLen)
         {
             int lastIdx = source.Length - 1;

@@ -169,7 +169,7 @@ namespace MCCompilerConsole.Converter
         RESERVED,   // 記号
         MNEMONIC,   // ニーモニック
         OPERAND,    // オペランド
-        //IDENT,      // 識別子
+        //IDENT,    // 識別子
         INTEGER,    // 整数、数字
         STRING,     // 文字列
         FLOAT,      // 不動小数点数
@@ -400,20 +400,6 @@ namespace MCCompilerConsole.Converter
 
         // 実行情報
         ExecutionInfo = Type | Execution,
-
-        // active 実行状態
-        MagicInit = 0b0000_0001_0000_0000_0000_0000,
-        MagicRunning = 0b0000_0010_0000_0000_0000_0000,
-        MagicEnd = 0b0000_0100_0000_0000_0000_0000,
-        MagicForceEnd = 0b0000_1000_0000_0000_0000_0000,
-        MagicState = MagicInit | MagicRunning | MagicEnd | MagicForceEnd,
-
-        // passive 実行状態
-        SkillInit = 0b0001_0000_0000_0000_0000_0000,
-        SkillRunning = 0b0010_0000_0000_0000_0000_0000,
-        SkillEnd = 0b0100_0000_0000_0000_0000_0000,
-        SkillForceaEnd = 0b1000_0000_0000_0000_0000_0000,
-        SkillState = SkillInit | SkillRunning | SkillEnd | SkillForceaEnd,
     }
 
     static public class Define

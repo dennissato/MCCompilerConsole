@@ -1,71 +1,86 @@
 {
     "exe": "MCCompilerConsole.exe",
-    "mode": [
+    "name": "MC",
+    "modes": [
         {
-            "Release": [
-                {
-                    "extension": [
-                        ".mcs",
-                        ".macs"
-                    ],
-                    "argumentorder": [
-                        "ExecutionDirectory",
-                        "SourceFileName",
-                        "LogFile",
-                        "Language",
-                        "Release",
-                        "CompileMCASDir",
-                        "CompileMCBINDir",
-                        "CompileMCDir",
-                        "AssembleMCBINDir",
-                        "AssembleMCDir"
-                    ]
-                }
+            "modename": "Release",
+            "extension": [
+                ".mcs",
+                ".macs"
             ],
-            "Debug": [
-                {
-                    "extension": [
-                        ".mcs",
-                        ".macs"
-                    ],
-                    "argumentorder": [
-                        "ExecutionDirectory",
-                        "SourceFileName",
-                        "LogFile",
-                        "Language",
-                        "Debug",
-                        "CompileMCASDir",
-                        "CompileMCBINDir",
-                        "CompileMCDir",
-                        "AssembleMCBINDir",
-                        "AssembleMCDir"
-                    ]
-                }
+            "argumentorder": [
+                "ExecutionDirectory",
+                "SourceFileName",
+                "LogFile",
+                "Language",
+                "Release",
+                "CompileMCASDir",
+                "CompileMCBINDir",
+                "CompileMCDir",
+                "AssembleMCBINDir",
+                "AssembleMCDir"
+            ]
+        },
+        {
+            "modename": "Debug",
+            "extension": [
+                ".mcs",
+                ".macs"
             ],
-            "Disassemble": [
-                {
-                    "extension": [
-                        ".mc"
-                    ],
-                    "argumentorder": [
-                        "ExecutionDirectory",
-                        "SourceFileName",
-                        "LogFile",
-                        "Language"
-                    ]
-                }
+            "argumentorder": [
+                "ExecutionDirectory",
+                "SourceFileName",
+                "LogFile",
+                "Language",
+                "Debug",
+                "CompileMCASDir",
+                "CompileMCBINDir",
+                "CompileMCDir",
+                "AssembleMCBINDir",
+                "AssembleMCDir"
+            ]
+        },
+        {
+            "modename": "Disassemble",
+            "extension": [
+                ".mc"
+            ],
+            "argumentorder": [
+                "ExecutionDirectory",
+                "SourceFileName",
+                "LogFile",
+                "Language"
             ]
         }
     ],
     "arguments": [
         {
-            "Release": "r",
-            "Debug": "c",
-            "CompileMCASDir": "\\mcas",
-            "CompileMCBINDir": "\\mcbin",
-            "CompileMCDir": "\\mc",
-            "AssembleMCBINDir": "\\mcbin",
-            "AssembleMCDir": "\\mc"
+            "name": "Release",
+            "value": "r"
+        },
+        {
+            "name": "Debug",
+            "value": "d"
+        },
+        {
+            "name": "CompileMCASDir",
+            "value": "\\mcas"
+        },
+        {
+            "name": "CompileMCBINDir",
+            "value": "\\mcbin"
+        },
+        {
+            "name": "CompileMCDir",
+            "value": "\\mc"
+        },
+        {
+            "name": "AssembleMCBINDir",
+            "value": "\\mcbin"
+        },
+        {
+            "name": "AssembleMCDir",
+            "value": "\\mc"
         }
     ]
 }
