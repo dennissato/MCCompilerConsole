@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace MCCompilerConsole.Converter
 {
@@ -626,8 +627,9 @@ namespace MCCompilerConsole.Converter
         /// <param name="strIdx">ある文字開始位置</param>
         /// <param name="strLen">ある文字の文字数</param>
         /// <returns>行文字, 行番号</returns>
-        static public (string linestr, int lineNo) GetaSourceLineStrNo(in string source, int strIdx, int strLen)
+        static public (string linestr, int lineNo) GetaSourceLineStrNo(byte[] source, int strIdx, int strLen)
         {
+            //string sourceStr = Encoding.UTF8.GetString(source);
             int lastIdx = source.Length - 1;
             int lineStart = Math.Min(strIdx, lastIdx);
             int lineEnd = Math.Min(strIdx + strLen, lastIdx);
@@ -642,7 +644,7 @@ namespace MCCompilerConsole.Converter
             }
             for (int i = 0; i < strIdx && i < source.Length; ++i)
             {
-                char c = source[i];
+                byte c = source[i];
                 if (0x0a == c || 0x0d == c)
                 {
                     if (c == 0x0d && i + 1 < source.Length && source[i + 1] == 0x0a)
@@ -655,7 +657,7 @@ namespace MCCompilerConsole.Converter
             }
             lineStart = source[lineStart] == 0x0a || source[lineStart] == 0x0d ? lineStart + 1 : lineStart;
             lineEnd = source[lineEnd] == 0x0a || source[lineEnd] == 0x0d ? lineEnd - 1 : lineEnd;
-            string linestr = source.Substring(lineStart, lineEnd - lineStart + 1);
+            string linestr = Encoding.UTF8.GetString(source, lineStart, lineEnd - lineStart + 1);
             return (linestr, line);
         }
     }

@@ -41,7 +41,7 @@ namespace MCCompilerConsole.Converter.Assembler
             string fullPath = Path.GetFullPath(sourceFileName);
             result.Files.Add((fullPath, false));
 
-            Tokenizer.TokenizeResult _tokenizerResult;
+            TokenizeResult _tokenizerResult;
 
             //////////////////////////////////////////
             // 最初の登録は元ファイルのみ
@@ -61,7 +61,7 @@ namespace MCCompilerConsole.Converter.Assembler
 
                 string openFileDirectory = Path.GetDirectoryName(openFile);
                 aa.File = openFile;
-                aa.Source = File.ReadAllText(openFile, System.Text.Encoding.UTF8);
+                aa.Source = File.ReadAllBytes(openFile);
 
                 // -- 元ファイルのinclude処理 --
                 _tokenizerResult = aa.Tokenizer.Do();
@@ -90,9 +90,9 @@ namespace MCCompilerConsole.Converter.Assembler
         /// <param name="directory">処理するファイルのディレクトリ</param>
         /// <param name="tokenizeResult">トークナイズ結果</param>
         /// <param name="isCompileFile">大元のコンパイルファイル</param>
-        private void Processing(in string directory, Tokenizer.TokenizeResult tokenizeResult, bool isAssembleFile)
+        private void Processing(in string directory, TokenizeResult tokenizeResult, bool isAssembleFile)
         {
-            currentToken = tokenizeResult.HeadToken;
+            currentToken = tokenizeResult.HeadToken as Tokenizer.AsmToken;
             while (!AtEOF())
             {
                 // インクルードファイルの処理
@@ -139,7 +139,7 @@ namespace MCCompilerConsole.Converter.Assembler
                 {
                     // 処理をするファイルがあったディレクトリと指定ファイル名から
                     // フルパスかしてそのファイルを開く
-                    string fileName = aa.Source.Substring(fileToken.StrIdx, fileToken.StrLen);
+                    string fileName = aa.GetSourceStr(fileToken.StrIdx, fileToken.StrLen);
                     string fullPath = Path.GetFullPath(fileName, directory);
                     (string name, bool isError) = result.Files.Find(files => files.fileName == fullPath);
                     if (name == null)
@@ -209,7 +209,7 @@ namespace MCCompilerConsole.Converter.Assembler
             Tokenizer.AsmToken tk = Consume(AsmTokenKind.LABEL);
             if (tk != null)
             {
-                string str = aa.Source.Substring(tk.StrIdx, tk.StrLen - 1); // :文字をつけない為に-1している
+                string str = aa.GetSourceStr(tk.StrIdx, tk.StrLen - 1); // :文字をつけない為に-1している
                 (bool success, int index) = aa.Linker.TemporaryRegistration(str);
                 if(!success)
                 {
@@ -243,7 +243,7 @@ namespace MCCompilerConsole.Converter.Assembler
                 return null;
             }
             Tokenizer.AsmToken token = currentToken;
-            currentToken = currentToken.Next;
+            currentToken = currentToken.Next as Tokenizer.AsmToken;
             return token;
         }
 
@@ -263,7 +263,7 @@ namespace MCCompilerConsole.Converter.Assembler
                 // 最後まで読んでいる場合は何もしない
                 return;
             }
-            currentToken = currentToken.Next;
+            currentToken = currentToken.Next as Tokenizer.AsmToken;
         }
 
         /// <summary>

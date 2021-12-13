@@ -660,7 +660,7 @@ namespace MCCompilerConsole.Converter.Compiler
                             }
 
                             // Menmonic.DEBUG_LOG , strings..., ArgNum(4Byte), Args(Operand)...
-                            WriteDebugLog(ca.Source.Substring(node.StrIdx, node.StrLen), node.DebugArg);
+                            WriteDebugLog(ca.GetSourceStr(node.StrIdx, node.StrLen), node.DebugArg);
                         }
                     }
                     return;
@@ -908,7 +908,7 @@ namespace MCCompilerConsole.Converter.Compiler
                     return;
 
                 case NodeKind.STRING:
-                    WriteCode(Mnemonic.PUSHS, ca.Source.Substring(node.StrIdx, node.StrLen));
+                    WriteCode(Mnemonic.PUSHS, ca.GetSourceStr(node.StrIdx, node.StrLen));
                     return;
 
                 case NodeKind.FLOAT:

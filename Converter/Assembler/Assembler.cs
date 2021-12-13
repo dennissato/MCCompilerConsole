@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using System.Collections.Generic;
 
 namespace MCCompilerConsole.Converter.Assembler
@@ -16,7 +17,7 @@ namespace MCCompilerConsole.Converter.Assembler
             public string MCBinDir { get; set; }
             public string MCDir { get; set; }
             public string File { get; set; }
-            public string Source { get; set; }
+            public byte[] Source { get; set; }
             public Tokenizer Tokenizer { get; set; }
             public Linker Linker { get; set; }
             public ErrorData ErrorData { get; set; }
@@ -29,6 +30,15 @@ namespace MCCompilerConsole.Converter.Assembler
                 File = null;
                 Source = null;
                 Config = MagicConfig.None;
+            }
+
+            public string GetSourceStr(int idx, int len)
+            {
+                if (Source == null)
+                {
+                    return "";
+                }
+                return Encoding.UTF8.GetString(Source, idx, len);
             }
         }
 
@@ -84,10 +94,10 @@ namespace MCCompilerConsole.Converter.Assembler
                         continue;
                     }
                     assembleArgs.File = file.fileName;
-                    assembleArgs.Source = File.ReadAllText(file.fileName, System.Text.Encoding.UTF8);
+                    assembleArgs.Source = File.ReadAllBytes(file.fileName);
 
                     // トークナイズ
-                    Tokenizer.TokenizeResult tokenizeResult = tokenizer.Do();
+                    TokenizeResult tokenizeResult = tokenizer.Do();
                     if (!tokenizeResult.Success)
                     {
                         // TODO プリプロセッサで一通りTokenizeしてるはず

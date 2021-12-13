@@ -41,7 +41,7 @@ namespace MCCompilerConsole.Converter.Compiler
             string fullPath = Path.GetFullPath(sourceFileName);
             result.Files.Add((fullPath, false));
 
-            Tokenizer.TokenizeResult _tokenizerResult;
+            TokenizeResult _tokenizerResult;
             Parser.ParseResult _parseResult;
 
             //////////////////////////////////////////
@@ -62,7 +62,7 @@ namespace MCCompilerConsole.Converter.Compiler
 
                 string openFileDirectory = Path.GetDirectoryName(openFile);
                 ca.File = openFile;
-                ca.Source = File.ReadAllText(openFile, System.Text.Encoding.UTF8);
+                ca.Source = File.ReadAllBytes(openFile);
 
                 // -- 元ファイルのinclude処理 --
                 _tokenizerResult = ca.Tokenizer.Do();
@@ -117,9 +117,8 @@ namespace MCCompilerConsole.Converter.Compiler
                     continue;
                 }
 
-                //string openFileDirectory = Path.GetDirectoryName(openFile);
                 ca.File = openFile;
-                ca.Source = File.ReadAllText(openFile, System.Text.Encoding.UTF8);
+                ca.Source = File.ReadAllBytes(openFile);
 
                 // -- 元ファイルのinclude処理 --
                 // トークナイズする
@@ -158,9 +157,8 @@ namespace MCCompilerConsole.Converter.Compiler
                     continue;
                 }
 
-                string openFileDirectory = Path.GetDirectoryName(openFile);
                 ca.File = openFile;
-                ca.Source = File.ReadAllText(openFile, System.Text.Encoding.UTF8);
+                ca.Source = File.ReadAllBytes(openFile);
 
                 // -- 元ファイルのinclude処理 --
                 // トークナイズする
@@ -192,9 +190,9 @@ namespace MCCompilerConsole.Converter.Compiler
         /// <param name="directory">処理するファイルのディレクトリ</param>
         /// <param name="tokenizeResult">トークナイズ結果</param>
         /// <param name="isCompileFile">大元のコンパイルファイル</param>
-        private void Processing(in Compailer.CompileArgs ca, in string directory, Tokenizer.TokenizeResult tokenizeResult, bool isCompileFile)
+        private void Processing(in Compailer.CompileArgs ca, in string directory, TokenizeResult tokenizeResult, bool isCompileFile)
         {
-            currentToken = tokenizeResult.HeadToken;
+            currentToken = tokenizeResult.HeadToken as Tokenizer.Token;
             while (!AtEOF())
             {
                 if (Include(ca, directory))
@@ -242,7 +240,7 @@ namespace MCCompilerConsole.Converter.Compiler
                 {
                     // 処理をするファイルがあったディレクトリと指定ファイル名から
                     // フルパスかしてそのファイルを開く
-                    string fileName = ca.Source.Substring(fileToken.StrIdx, fileToken.StrLen);
+                    string fileName = ca.GetSourceStr(fileToken.StrIdx, fileToken.StrLen);
                     string fullPath = Path.GetFullPath(fileName, directory);
                     (string name, bool isError) = result.Files.Find(files => files.fileName == fullPath);
                     if (name == null)
@@ -278,7 +276,7 @@ namespace MCCompilerConsole.Converter.Compiler
                     // 文字数を見る必要がある
                     if (tk.StrLen > 0)
                     {
-                        ca.Linker.FuncMain = ca.Source.Substring(tk.StrIdx, tk.StrLen);
+                        ca.Linker.FuncMain = ca.GetSourceStr(tk.StrIdx, tk.StrLen);
                         return true;
                     }
                 }
@@ -294,7 +292,7 @@ namespace MCCompilerConsole.Converter.Compiler
                     // 文字数を見る必要がある
                     if (tk.StrLen > 0)
                     {
-                        ca.Linker.FuncInit = ca.Source.Substring(tk.StrIdx, tk.StrLen);
+                        ca.Linker.FuncInit = ca.GetSourceStr(tk.StrIdx, tk.StrLen);
                         return true;
                     }
                 }
@@ -368,7 +366,7 @@ namespace MCCompilerConsole.Converter.Compiler
                 return null;
             }
             Tokenizer.Token token = currentToken;
-            currentToken = currentToken.Next;
+            currentToken = currentToken.Next as Tokenizer.Token;
             return token;
         }
 
@@ -388,7 +386,7 @@ namespace MCCompilerConsole.Converter.Compiler
                 // 最後まで読んでいる場合は何もしない
                 return;
             }
-            currentToken = currentToken.Next;
+            currentToken = currentToken.Next as Tokenizer.Token;
         }
 
         /// <summary>

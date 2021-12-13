@@ -43,7 +43,7 @@ namespace MCCompilerConsole.Converter.Assembler
         /// <param name="parserResult">パーサーの結果</param>
         /// <param name="isEpilog">エピローグをつけるか</param>
         /// <returns>中間ファイル作成結果</returns>
-        public CodeGenResult Do(string sourceFileName, int offset, Tokenizer.TokenizeResult tokenResult, bool isEpilog, bool isRelease)
+        public CodeGenResult Do(string sourceFileName, int offset, TokenizeResult tokenResult, bool isEpilog, bool isRelease)
         {
             Initialize();
 
@@ -59,7 +59,7 @@ namespace MCCompilerConsole.Converter.Assembler
                     outFile.Add((byte)aa.Config);
                 }
 
-                currentToken = tokenResult.HeadToken.Next;
+                currentToken = tokenResult.HeadToken.Next as Tokenizer.AsmToken;
                 Generate(offset);
             }
 
@@ -120,7 +120,7 @@ namespace MCCompilerConsole.Converter.Assembler
                     case AsmTokenKind.LABEL:
                         {
                             // ラベルのアドレス登録をする
-                            string label = aa.Source.Substring(currentToken.StrIdx, currentToken.StrLen - 1);   // ラベルなので : 文字分を -1 する
+                            string label = aa.GetSourceStr(currentToken.StrIdx, currentToken.StrLen - 1);   // ラベルなので : 文字分を -1 する
                             aa.Linker.Registration(label, offset + outFile.Count);
                         }
                         break;
@@ -128,7 +128,7 @@ namespace MCCompilerConsole.Converter.Assembler
                     case AsmTokenKind.MNEMONIC:
                         {
                             Tokenizer.AsmToken mnemonicTk = currentToken;
-                            string mnemonicstr = aa.Source.Substring(currentToken.StrIdx, currentToken.StrLen).ToUpper();
+                            string mnemonicstr = aa.GetSourceStr(currentToken.StrIdx, currentToken.StrLen).ToUpper();
                             Mnemonic mnemonic;
                             if (Enum.TryParse<Mnemonic>(mnemonicstr, out mnemonic))
                             {
@@ -174,7 +174,7 @@ namespace MCCompilerConsole.Converter.Assembler
                                             // オペランド
                                             if (currentToken.Kind == AsmTokenKind.OPERAND)
                                             {
-                                                string str = aa.Source.Substring(currentToken.StrIdx, currentToken.StrLen).ToUpper();
+                                                string str = aa.GetSourceStr(currentToken.StrIdx, currentToken.StrLen).ToUpper();
                                                 if (!AddOperand(str))
                                                 {
                                                     // 不明オペランドです
@@ -220,7 +220,7 @@ namespace MCCompilerConsole.Converter.Assembler
                                             // オペランド
                                             if (currentToken.Kind == AsmTokenKind.OPERAND)
                                             {
-                                                string str = aa.Source.Substring(currentToken.StrIdx, currentToken.StrLen).ToUpper();
+                                                string str = aa.GetSourceStr(currentToken.StrIdx, currentToken.StrLen).ToUpper();
                                                 if (!AddOperand(str))
                                                 {
                                                     // 不明オペランドです
@@ -265,7 +265,7 @@ namespace MCCompilerConsole.Converter.Assembler
                                     case Mnemonic.ADDS:
                                         {
                                             // オペランド(1Bte)
-                                            string str = aa.Source.Substring(currentToken.StrIdx, currentToken.StrLen).ToUpper();
+                                            string str = aa.GetSourceStr(currentToken.StrIdx, currentToken.StrLen).ToUpper();
                                             if (!AddOperand(str))
                                             {
                                                 // 不明オペランドです
@@ -284,7 +284,7 @@ namespace MCCompilerConsole.Converter.Assembler
                                                 SkipKinds(skipKinds);
                                                 continue;
                                             }
-                                            str = aa.Source.Substring(currentToken.StrIdx, currentToken.StrLen);
+                                            str = aa.GetSourceStr(currentToken.StrIdx, currentToken.StrLen);
                                             AddNum(GetUtf8StrLength(str));
                                             AddString(str);
                                         }
@@ -301,7 +301,7 @@ namespace MCCompilerConsole.Converter.Assembler
                                             // ジャンプ系の場合は指定ラベルのアドレスにジャンプなので
                                             // ラベルのIndexを入れる
                                             // 最終的にはリンカーが実際のジャンプアドレスを入れてくれる
-                                            string label = aa.Source.Substring(currentToken.StrIdx, currentToken.StrLen);
+                                            string label = aa.GetSourceStr(currentToken.StrIdx, currentToken.StrLen);
                                             (bool success, int index) = aa.Linker.GetLabelIndex(label);
                                             if (success)
                                             {
@@ -332,7 +332,7 @@ namespace MCCompilerConsole.Converter.Assembler
                                         {
                                             if (currentToken.Kind == AsmTokenKind.STRING)
                                             {
-                                                string str = aa.Source.Substring(currentToken.StrIdx, currentToken.StrLen);
+                                                string str = aa.GetSourceStr(currentToken.StrIdx, currentToken.StrLen);
                                                 AddNum(GetUtf8StrLength(str));
                                                 AddString(str);
                                             }
@@ -353,7 +353,7 @@ namespace MCCompilerConsole.Converter.Assembler
                                     case Mnemonic.MEMCOPY:
                                         {
                                             // オペランド1
-                                            string str = aa.Source.Substring(currentToken.StrIdx, currentToken.StrLen).ToUpper();
+                                            string str = aa.GetSourceStr(currentToken.StrIdx, currentToken.StrLen).ToUpper();
                                             if (!AddOperand(str))
                                             {
                                                 // ニーモニックエラー
@@ -363,7 +363,7 @@ namespace MCCompilerConsole.Converter.Assembler
                                             }
                                             // オペランド2
                                             NextToken();
-                                            str = aa.Source.Substring(currentToken.StrIdx, currentToken.StrLen).ToUpper();
+                                            str = aa.GetSourceStr(currentToken.StrIdx, currentToken.StrLen).ToUpper();
                                             if (!AddOperand(str))
                                             {
                                                 // ニーモニックエラー
@@ -449,7 +449,7 @@ namespace MCCompilerConsole.Converter.Assembler
                                                 // 文字列
                                                 if (currentToken.Kind == AsmTokenKind.STRING)
                                                 {
-                                                    string str = aa.Source.Substring(currentToken.StrIdx, currentToken.StrLen);
+                                                    string str = aa.GetSourceStr(currentToken.StrIdx, currentToken.StrLen);
                                                     AddNum(GetUtf8StrLength(str));
                                                     AddString(str);
                                                 }
@@ -482,7 +482,7 @@ namespace MCCompilerConsole.Converter.Assembler
                                                         SkipKinds(skipKinds);
                                                         continue;
                                                     }
-                                                    string str = aa.Source.Substring(currentToken.StrIdx, currentToken.StrLen).ToUpper();
+                                                    string str = aa.GetSourceStr(currentToken.StrIdx, currentToken.StrLen).ToUpper();
                                                     if (!AddOperand(str))
                                                     {
                                                         // 不明オペランドです
@@ -524,7 +524,7 @@ namespace MCCompilerConsole.Converter.Assembler
                                                         SkipKinds(skipKinds);
                                                         continue;
                                                     }
-                                                    string str = aa.Source.Substring(currentToken.StrIdx, currentToken.StrLen).ToUpper();
+                                                    string str = aa.GetSourceStr(currentToken.StrIdx, currentToken.StrLen).ToUpper();
                                                     Operand operand;
                                                     if (!Enum.TryParse<Operand>(str, out operand))
                                                     {
@@ -547,7 +547,7 @@ namespace MCCompilerConsole.Converter.Assembler
                                             if (!isRelease)
                                             {
                                                 // オペランド(1Bte)
-                                                string str = aa.Source.Substring(currentToken.StrIdx, currentToken.StrLen).ToUpper();
+                                                string str = aa.GetSourceStr(currentToken.StrIdx, currentToken.StrLen).ToUpper();
                                                 if (!AddOperand(str))
                                                 {
                                                     // 不明オペランドです
@@ -566,14 +566,14 @@ namespace MCCompilerConsole.Converter.Assembler
                                                     SkipKinds(skipKinds);
                                                     continue;
                                                 }
-                                                str = aa.Source.Substring(currentToken.StrIdx, currentToken.StrLen);
+                                                str = aa.GetSourceStr(currentToken.StrIdx, currentToken.StrLen);
                                                 AddNum(GetUtf8StrLength(str));
                                                 AddString(str);
                                             }
                                             else
                                             {
 
-                                                string str = aa.Source.Substring(currentToken.StrIdx, currentToken.StrLen).ToUpper();
+                                                string str = aa.GetSourceStr(currentToken.StrIdx, currentToken.StrLen).ToUpper();
                                                 Operand operand;
                                                 if (!Enum.TryParse<Operand>(str, out operand))
                                                 {
@@ -608,7 +608,7 @@ namespace MCCompilerConsole.Converter.Assembler
                                                 // オペランド
                                                 if (currentToken.Kind == AsmTokenKind.OPERAND)
                                                 {
-                                                    string str = aa.Source.Substring(currentToken.StrIdx, currentToken.StrLen).ToUpper();
+                                                    string str = aa.GetSourceStr(currentToken.StrIdx, currentToken.StrLen).ToUpper();
                                                     if (!AddOperand(str))
                                                     {
                                                         // 不明オペランドです
@@ -661,7 +661,7 @@ namespace MCCompilerConsole.Converter.Assembler
             }
             if(currentToken.Kind != AsmTokenKind.EOF)
             {
-                currentToken = currentToken.Next;
+                currentToken = currentToken.Next as Tokenizer.AsmToken;
             }
         }
 

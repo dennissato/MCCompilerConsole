@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Text;
+using System.Collections.Generic;
 
 namespace MCCompilerConsole.Converter.Compiler
 {
@@ -592,10 +593,10 @@ namespace MCCompilerConsole.Converter.Compiler
         /// </summary>
         /// <param name="tokenizeResult">トークナイズ結果</param>
         /// <returns>定義処理結果</returns>
-        public ParseResult DefineStructEnum(Tokenizer.TokenizeResult tokenizeResult)
+        public ParseResult DefineStructEnum(TokenizeResult tokenizeResult)
         {
             Initialize_Preprocess();
-            this.currentToken = tokenizeResult.HeadToken;
+            this.currentToken = tokenizeResult.HeadToken as Tokenizer.Token;
             this.isExpectErrorDraw = true;  // エラーを表示
 
             while (!AtEOF())
@@ -659,10 +660,10 @@ namespace MCCompilerConsole.Converter.Compiler
         /// </summary>
         /// <param name="tokenizeResult">トークナイズ結果</param>
         /// <returns>処理結果</returns>
-        public ParseResult DefineFuncGlobalVar(Tokenizer.TokenizeResult tokenizeResult)
+        public ParseResult DefineFuncGlobalVar(TokenizeResult tokenizeResult)
         {
             Initialize_Preprocess();
-            this.currentToken = tokenizeResult.HeadToken;
+            this.currentToken = tokenizeResult.HeadToken as Tokenizer.Token;
             this.isExpectErrorDraw = true;  // エラーを表示する
 
             while (!AtEOF())
@@ -689,7 +690,7 @@ namespace MCCompilerConsole.Converter.Compiler
                     if (nowErrorCount < result.ErrorCount)
                     {
                         // 型の指定に失敗
-                        string typeStr = ca.Source.Substring(typeTk.StrIdx, typeTk.StrLen);
+                        string typeStr = ca.GetSourceStr(typeTk.StrIdx, typeTk.StrLen);
                         Error(ca.ErrorData.Str(ERROR_TEXT.TYPE_DEFINE_FAILD, typeStr), typeTk.StrIdx, typeTk.StrLen);
 
                         // 型のエラーがあった場合は
@@ -711,7 +712,7 @@ namespace MCCompilerConsole.Converter.Compiler
                             }
 
                             // 関数定義
-                            string identStr = ca.Source.Substring(identTk.StrIdx, identTk.StrLen);
+                            string identStr = ca.GetSourceStr(identTk.StrIdx, identTk.StrLen);
 
                             // 引数の数
                             List<Parser.VariableType> argList = new List<VariableType>();
@@ -731,7 +732,7 @@ namespace MCCompilerConsole.Converter.Compiler
                                 if (argErrorCount < result.ErrorCount)
                                 {
                                     // 型の指定に失敗
-                                    string typeStr = ca.Source.Substring(typeTk.StrIdx, typeTk.StrLen);
+                                    string typeStr = ca.GetSourceStr(typeTk.StrIdx, typeTk.StrLen);
                                     Error(ca.ErrorData.Str(ERROR_TEXT.TYPE_DEFINE_FAILD, typeStr), typeTk.StrIdx, typeTk.StrLen);
                                     SkipKinds(nextArgOrFuncEndKInd);
                                 }
@@ -742,7 +743,7 @@ namespace MCCompilerConsole.Converter.Compiler
                                     SkipKinds(nextArgOrFuncEndKInd);
                                 }
                                 argList.Add(argv);
-                                argNames.Add(ca.Source.Substring(argToken.StrIdx, argToken.StrLen));
+                                argNames.Add(ca.GetSourceStr(argToken.StrIdx, argToken.StrLen));
                                 if (!Consum(","))
                                 {
                                     // 引数はもうないので抜ける
@@ -764,12 +765,12 @@ namespace MCCompilerConsole.Converter.Compiler
                         }
 
                         // グローバル変数定義
-                        string ident = ca.Source.Substring(identTk.StrIdx, identTk.StrLen);
+                        string ident = ca.GetSourceStr(identTk.StrIdx, identTk.StrLen);
                         Variable gv = DefineVariable(ident, vt, Scope.GLOBAL);
                         if (gv == null)
                         {
                             // すでに登録済み
-                            Error(ca.ErrorData.Str(ERROR_TEXT.VARIABLE_ALREADY_DEFINE, ca.Source.Substring(identTk.StrIdx, identTk.StrLen)), identTk.StrIdx, identTk.StrLen);
+                            Error(ca.ErrorData.Str(ERROR_TEXT.VARIABLE_ALREADY_DEFINE, ca.GetSourceStr(identTk.StrIdx, identTk.StrLen)), identTk.StrIdx, identTk.StrLen);
                             (TokenKind, string)[] kinds = { (TokenKind.RESERVED, ";") };
                             SkipKinds(kinds);
                         }
@@ -833,10 +834,10 @@ namespace MCCompilerConsole.Converter.Compiler
         /// </summary>
         /// <param name="tokenizeResult"></param>
         /// <returns></returns>
-        public ParseResult FixGlobalArraySize(Tokenizer.TokenizeResult tokenizeResult)
+        public ParseResult FixGlobalArraySize(TokenizeResult tokenizeResult)
         {
             Initialize_Preprocess();
-            this.currentToken = tokenizeResult.HeadToken;
+            this.currentToken = tokenizeResult.HeadToken as Tokenizer.Token;
 
             while (!AtEOF())
             {
@@ -888,7 +889,7 @@ namespace MCCompilerConsole.Converter.Compiler
                         if (!SkipFuncDefine())
                         {
                             // グローバル変数定義
-                            string ident = ca.Source.Substring(identTk.StrIdx, identTk.StrLen);
+                            string ident = ca.GetSourceStr(identTk.StrIdx, identTk.StrLen);
                             (Scope scope, Variable gv) = FindVariable(ident, Scope.GLOBAL);
                             if (gv == null)
                             {
@@ -923,10 +924,10 @@ namespace MCCompilerConsole.Converter.Compiler
         /// </summary>
         /// <param name="tokenizeResult">トークナイズ結果</param>
         /// <returns>パースの結果</returns>
-        public ParseResult Do(Tokenizer.TokenizeResult tokenizeResult)
+        public ParseResult Do(TokenizeResult tokenizeResult)
         {
             Initialize_Do();
-            this.currentToken = tokenizeResult.HeadToken;
+            this.currentToken = tokenizeResult.HeadToken as Tokenizer.Token;
 
             Program();
 
@@ -1009,7 +1010,7 @@ namespace MCCompilerConsole.Converter.Compiler
 
                         // 関数定義
                         Node func = new Node(NodeKind.FUNC_DEF);
-                        string funcName = ca.Source.Substring(identTk.StrIdx, identTk.StrLen);
+                        string funcName = ca.GetSourceStr(identTk.StrIdx, identTk.StrLen);
                         Linker.FuncInfo funcInfo = ca.Linker.GetFuncInfo(funcName);
                         func.FuncInfo = funcInfo;
 
@@ -1041,7 +1042,7 @@ namespace MCCompilerConsole.Converter.Compiler
                                 return null;
                             }
 
-                            string identArg = ca.Source.Substring(argToken.StrIdx, argToken.StrLen);
+                            string identArg = ca.GetSourceStr(argToken.StrIdx, argToken.StrLen);
                             Variable lv = DefineVariable(identArg, argvt, Scope.LOCAL);
                             if (lv == null)
                             {
@@ -1069,7 +1070,7 @@ namespace MCCompilerConsole.Converter.Compiler
                     else
                     {
                         // グローバル変数定義
-                        string ident = ca.Source.Substring(identTk.StrIdx, identTk.StrLen);
+                        string ident = ca.GetSourceStr(identTk.StrIdx, identTk.StrLen);
                         (Scope scope, Variable gv) = FindVariable(ident, Scope.GLOBAL);   // Global変数はPreDo時に定義されているので探す
                         if (gv == null)
                         {
@@ -1677,7 +1678,7 @@ namespace MCCompilerConsole.Converter.Compiler
                         Tokenizer.Token identTk = currentToken;
                         if (Consum(TokenKind.IDENT))
                         {
-                            string ident = ca.Source.Substring(identTk.StrIdx, identTk.StrLen);
+                            string ident = ca.GetSourceStr(identTk.StrIdx, identTk.StrLen);
                             bool isFound = false;
                             int size = 0;
 
@@ -1785,7 +1786,7 @@ namespace MCCompilerConsole.Converter.Compiler
             Tokenizer.Token token = currentToken;
             if (Consum(TokenKind.IDENT))
             {
-                string ident = ca.Source.Substring(token.StrIdx, token.StrLen);
+                string ident = ca.GetSourceStr(token.StrIdx, token.StrLen);
 
                 // 関数呼び出し
                 if (Consum("("))
@@ -1826,7 +1827,7 @@ namespace MCCompilerConsole.Converter.Compiler
                             if (Consum(TokenKind.IDENT))
                             {
                                 // 変数のアドレスをプッシュする.
-                                string argIdent = ca.Source.Substring(argTk.StrIdx, argTk.StrLen);
+                                string argIdent = ca.GetSourceStr(argTk.StrIdx, argTk.StrLen);
                                 (Scope argS, Variable argV) = FindVariable(argIdent);
                                 if (argV == null)
                                 {
@@ -1998,7 +1999,7 @@ namespace MCCompilerConsole.Converter.Compiler
                 if (nowErrorCount < result.ErrorCount)
                 {
                     // 式の終わりまで読み飛ばす
-                    string type = ca.Source.Substring(typeTk.StrIdx, typeTk.StrLen);
+                    string type = ca.GetSourceStr(typeTk.StrIdx, typeTk.StrLen);
                     Error(ca.ErrorData.Str(ERROR_TEXT.TYPE_DEFINE_FAILD, type), typeTk.StrIdx, typeTk.StrLen);
                     return null;
                 }
@@ -2007,7 +2008,7 @@ namespace MCCompilerConsole.Converter.Compiler
                 Tokenizer.Token identTK = currentToken;
                 if (Consum(TokenKind.IDENT))
                 {
-                    string ident = ca.Source.Substring(identTK.StrIdx, identTK.StrLen);
+                    string ident = ca.GetSourceStr(identTK.StrIdx, identTK.StrLen);
                     Variable lv = DefineVariable(ident, vt, Scope.LOCAL);
                     if (lv == null)
                     {
@@ -2119,7 +2120,7 @@ namespace MCCompilerConsole.Converter.Compiler
                     Tokenizer.Token elementTk = currentToken;
                     if (Consum(TokenKind.IDENT))
                     {
-                        string element = ca.Source.Substring(elementTk.StrIdx, elementTk.StrLen);
+                        string element = ca.GetSourceStr(elementTk.StrIdx, elementTk.StrLen);
                         (bool define, int value) = e.Value(element);
                         if (define)
                         {
@@ -2330,7 +2331,7 @@ namespace MCCompilerConsole.Converter.Compiler
                     node.StrLen = strTk.StrLen;
                     node.Block = new List<Node>();
                     node.DebugArg = new List<NodeKind>();
-                    string str = ca.Source.Substring(strTk.StrIdx, strTk.StrLen);
+                    string str = ca.GetSourceStr(strTk.StrIdx, strTk.StrLen);
                     int idx = 0;
                     while (idx < str.Length)
                     {
@@ -2488,7 +2489,7 @@ namespace MCCompilerConsole.Converter.Compiler
                 Tokenizer.Token identTk = currentToken;
                 if (Consum(TokenKind.IDENT))
                 {
-                    string ident = ca.Source.Substring(identTk.StrIdx, identTk.StrLen);
+                    string ident = ca.GetSourceStr(identTk.StrIdx, identTk.StrLen);
                     (Scope scope, Variable variable) = FindVariable(ident);
                     if (variable == null)
                     {
@@ -2556,7 +2557,7 @@ namespace MCCompilerConsole.Converter.Compiler
                             if (Consum(TokenKind.IDENT))
                             {
                                 Member member = readVt.Member;
-                                string varName = ca.Source.Substring(memberTk.StrIdx, memberTk.StrLen);
+                                string varName = ca.GetSourceStr(memberTk.StrIdx, memberTk.StrLen);
                                 Variable variableMember = null;
                                 foreach (var v in member.Variables)
                                 {
@@ -2631,7 +2632,7 @@ namespace MCCompilerConsole.Converter.Compiler
         private Node GLVariable(Tokenizer.Token identTk, bool isHeapRelease)
         {
             // 変数名
-            string ident = ca.Source.Substring(identTk.StrIdx, identTk.StrLen);
+            string ident = ca.GetSourceStr(identTk.StrIdx, identTk.StrLen);
 
             // 変数名からローカル変数・グローバル変数の順で調べる
             (Scope scope, Variable variable) = FindVariable(ident);
@@ -2730,7 +2731,7 @@ namespace MCCompilerConsole.Converter.Compiler
                     if (Consum(TokenKind.IDENT))
                     {
                         Member member = vt.Member;
-                        string varName = ca.Source.Substring(memberTk.StrIdx, memberTk.StrLen);
+                        string varName = ca.GetSourceStr(memberTk.StrIdx, memberTk.StrLen);
                         Variable varMem = null;
                         foreach (var v in member.Variables)
                         {
@@ -3036,7 +3037,7 @@ namespace MCCompilerConsole.Converter.Compiler
             //TODO ここで読み進めると
             if (typeToken.Kind == TokenKind.TYPE || typeToken.Kind == TokenKind.IDENT)
             {
-                string typeStr = ca.Source.Substring(typeToken.StrIdx, typeToken.StrLen);
+                string typeStr = ca.GetSourceStr(typeToken.StrIdx, typeToken.StrLen);
 
                 // 基本型
                 foreach (var t in PrimitiveType)
@@ -3096,7 +3097,7 @@ namespace MCCompilerConsole.Converter.Compiler
                         Tokenizer.Token boxtypeTk = currentToken;
                         if (Consum(TokenKind.TYPE))
                         {
-                            string ident = ca.Source.Substring(boxtypeTk.StrIdx, boxtypeTk.StrLen);
+                            string ident = ca.GetSourceStr(boxtypeTk.StrIdx, boxtypeTk.StrLen);
                             VariableKind vk = VariableKind.INVALID;
                             foreach (var type in BoxsType)
                             {
@@ -3229,7 +3230,7 @@ namespace MCCompilerConsole.Converter.Compiler
                     Expect("{", IdentTk.StrIdx, IdentTk.StrLen);
 
                     Member member = null;
-                    string ident = ca.Source.Substring(IdentTk.StrIdx, IdentTk.StrLen);
+                    string ident = ca.GetSourceStr(IdentTk.StrIdx, IdentTk.StrLen);
                     // 定義済みかチェック
                     foreach (var m in members)
                     {
@@ -3281,7 +3282,7 @@ namespace MCCompilerConsole.Converter.Compiler
                             if (Consum(TokenKind.IDENT))
                             {
                                 // 変数の追加
-                                string memberName = ca.Source.Substring(memberIdentTk.StrIdx, memberIdentTk.StrLen);
+                                string memberName = ca.GetSourceStr(memberIdentTk.StrIdx, memberIdentTk.StrLen);
                                 foreach (var mem in member.Variables)
                                 {
                                     // 同じメンバ名がないかチェック
@@ -3336,7 +3337,7 @@ namespace MCCompilerConsole.Converter.Compiler
                 Tokenizer.Token IdentTk = currentToken;
                 if (Consum(TokenKind.IDENT))
                 {
-                    string name = ca.Source.Substring(IdentTk.StrIdx, IdentTk.StrLen);
+                    string name = ca.GetSourceStr(IdentTk.StrIdx, IdentTk.StrLen);
 
                     DefineInfo info;
                     if (IsDefine(CheckType.ENUM, name, out info))
@@ -3357,7 +3358,7 @@ namespace MCCompilerConsole.Converter.Compiler
                             Tokenizer.Token elementTk = currentToken;
                             if (Consum(TokenKind.IDENT))
                             {
-                                string eName = ca.Source.Substring(elementTk.StrIdx, elementTk.StrLen);
+                                string eName = ca.GetSourceStr(elementTk.StrIdx, elementTk.StrLen);
 
                                 if (Consum("="))
                                 {
@@ -3510,7 +3511,9 @@ namespace MCCompilerConsole.Converter.Compiler
         private bool isReserved(Tokenizer.Token token, string op)
         {
             if (token == null) return false;
-            return token.Kind == TokenKind.RESERVED && token.StrLen == op.Length && string.Compare(op, 0, ca.Source, token.StrIdx, op.Length) == 0;
+            int length = Encoding.UTF8.GetByteCount(op);
+            string str = Encoding.UTF8.GetString(ca.Source, token.StrIdx, token.StrLen);
+            return token.Kind == TokenKind.RESERVED && token.StrLen == length && op == str;
         }
 
         /// <summary>
@@ -3575,7 +3578,7 @@ namespace MCCompilerConsole.Converter.Compiler
         {
             token1 = null;
             token2 = null;
-            if (currentToken.Kind == kind1 && isReserved(currentToken.Next, op))
+            if (currentToken.Kind == kind1 && isReserved(currentToken.Next as Tokenizer.Token, op))
             {
                 token1 = currentToken;
                 NextToken();
@@ -3647,8 +3650,8 @@ namespace MCCompilerConsole.Converter.Compiler
                         Error(ca.ErrorData.Str(ERROR_TEXT.ENUM_DIFFERENCE_SPECIFY));
                         return 0;
                     }
-                    string ident = ca.Source.Substring(identTK.StrIdx, identTK.StrLen);
-                    string element = ca.Source.Substring(elementTk.StrIdx, elementTk.StrLen);
+                    string ident = ca.GetSourceStr(identTK.StrIdx, identTK.StrLen);
+                    string element = ca.GetSourceStr(elementTk.StrIdx, elementTk.StrLen);
                     (bool define, int value) = GetEnumValue(ident, element);
                     if (define)
                     {
@@ -4106,7 +4109,7 @@ namespace MCCompilerConsole.Converter.Compiler
                 {
                     // indexの更新
 
-                    string ident = ca.Source.Substring(IdentTk.StrIdx, IdentTk.StrLen);
+                    string ident = ca.GetSourceStr(IdentTk.StrIdx, IdentTk.StrLen);
                     // struct a { int a; int b;} b = { a:0, b:1 };
                     // 初期化子を選べるように
                     if (Consum(":"))
@@ -4553,7 +4556,7 @@ namespace MCCompilerConsole.Converter.Compiler
                 // 最後まで読んでいる場合は何もしない
                 return;
             }
-            currentToken = currentToken.Next;
+            currentToken = currentToken.Next as Tokenizer.Token;
         }
 
         /// <summary>
