@@ -208,8 +208,8 @@ namespace MCCompilerConsole.Converter.Compiler
                     {
                         continue;
                     }
-                    // 魔法タイプの取得
-                    if (Type())
+                    // スキルの取得
+                    if (Skill())
                     {
                         continue;
                     }
@@ -229,7 +229,7 @@ namespace MCCompilerConsole.Converter.Compiler
         /// </summary>
         /// <param name="ca">共通引数</param>
         /// <param name="directory">処理をするファイルがあったディレクトリ</param>
-        /// <returns></returns>
+        /// <returns>ture:読み込み処理をした</returns>
         private bool Include(in Compailer.CompileArgs ca, in string directory)
         {
             Tokenizer.Token includeTk = Consume(TokenKind.INCLUDE);
@@ -264,7 +264,7 @@ namespace MCCompilerConsole.Converter.Compiler
         /// #main
         /// の読み込み処理
         /// </summary>
-        /// <returns></returns>
+        /// <returns>true:読み込み処理をした</returns>
         private bool Func()
         {
             Tokenizer.Token tk = Consume(TokenKind.MAIN);
@@ -303,10 +303,10 @@ namespace MCCompilerConsole.Converter.Compiler
         }
 
         /// <summary>
-        /// mcのタイプ取得
+        /// スキルの取得
         /// </summary>
-        /// <returns></returns>
-        private bool Type()
+        /// <returns>true:取得した</returns>
+        private bool Skill()
         {
             Tokenizer.Token tk = Consume(TokenKind.SKILL);
             if(tk != null)
@@ -322,7 +322,7 @@ namespace MCCompilerConsole.Converter.Compiler
         /// <summary>
         /// mcの実行回数取得
         /// </summary>
-        /// <returns></returns>
+        /// <returns>true:取得した</returns>
         private bool Execution()
         {
             Tokenizer.Token tk = Consume(TokenKind.ONETIME);
@@ -406,6 +406,7 @@ namespace MCCompilerConsole.Converter.Compiler
             result.Log = result.Log + (result.Log.Length > 0 ? "\n" : "") + errorStr;
             result.Success = false;
         }
+
         /// <summary>
         /// プリプロセッサのエラー
         /// エラーのファイル名と行番号も表示

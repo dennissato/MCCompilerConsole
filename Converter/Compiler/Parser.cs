@@ -625,7 +625,7 @@ namespace MCCompilerConsole.Converter.Compiler
         /// 構造体チェック
         /// 定義されて構造体の定義チェックやサイズチェックなどを行う
         /// </summary>
-        /// <returns>問題なかった場合true</returns>
+        /// <returns>チェック結果</returns>
         public ParseResult StructCheck()
         {
             Initialize_Preprocess();

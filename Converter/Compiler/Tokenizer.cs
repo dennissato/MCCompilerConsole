@@ -110,7 +110,6 @@ namespace MCCompilerConsole.Converter.Compiler
         /// <summary>
         /// トークナイズの実行
         /// </summary>
-        /// <param name="source">トークナイズするファイルの内容</param>
         /// <returns>トークナイズ結果</returns>
         public TokenizeResult Do()
         {

@@ -6,7 +6,7 @@ namespace MCCompilerConsole.Converter
 {
 
     /// <summary>
-    /// トークン
+    /// トークンベース
     /// </summary>
     public class TokenBase
     {
@@ -148,7 +148,6 @@ namespace MCCompilerConsole.Converter
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        /// <param name="ca"></param>
         public TokenizerBase()
         {
             headToke = null;
@@ -161,7 +160,7 @@ namespace MCCompilerConsole.Converter
         }
 
         /// <summary>
-        /// SetInfoの設定
+        /// StringInfoの設定
         /// </summary>
         /// <param name="bytes">設定Bytes</param>
         protected void SetStrInfo(byte[] bytes)
@@ -185,9 +184,8 @@ namespace MCCompilerConsole.Converter
         /// <summary>
         /// 数の取得
         /// </summary>
-        /// <param name="valueI">整数の場合はここに格納される</param>
-        /// <param name="valueF">不動小数点の場合はここに格納される</param>
-        /// <returns>トークンの種類</returns>
+        /// <param name="str">チェック開始文字</param>
+        /// <returns>エラー状態、トークン</returns>
         protected (GetNumericError error, TokenBase token) GetNumeric(string str)
         {
             if (IsNumerices(str))
@@ -327,8 +325,8 @@ namespace MCCompilerConsole.Converter
         /// <summary>
         /// Asciiの制御文字とスペースの読み飛ばし
         /// </summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
+        /// <param name="str">開始文字</param>
+        /// <returns>true:読み飛ばした</returns>
         protected bool SkipSpaceControlChar(string str)
         {
             // 空白・制御・改行文字はスキップする
@@ -411,6 +409,8 @@ namespace MCCompilerConsole.Converter
         /// <summary>
         /// 識別子の取得
         /// </summary>
+        /// <param name="delimiter">区切り文字判定関数</param>
+        /// <param name="str">開始文字</param>
         /// <returns>識別子の文字数</returns>
         protected TokenBase GetIdentifier(Delimiter delimiter, string str)
         {
@@ -464,18 +464,40 @@ namespace MCCompilerConsole.Converter
             return null;
         }
 
+        /// <summary>
+        /// strinfoから1文字取得
+        /// </summary>
+        /// <returns>文字</returns>
         protected string GetStrInfoStringOne()
         {
             return GetStrInfoString(1);
         }
+
+        /// <summary>
+        /// strinfoから2文字取得
+        /// </summary>
+        /// <returns>文字</returns>
         protected string GetStrInfoStringTwo()
         {
             return GetStrInfoString(2);
         }
+
+        /// <summary>
+        /// stringoから文字取得
+        /// </summary>
+        /// <param name="length">取得文字数</param>
+        /// <returns>文字</returns>
         protected string GetStrInfoString(int length)
         {
             return GetStrInfoString(strInfoIdx, length);
         }
+
+        /// <summary>
+        /// stringoから文字取得
+        /// </summary>
+        /// <param name="idx">取得開始文字</param>
+        /// <param name="length">取得文字数</param>
+        /// <returns>文字</returns>
         protected string GetStrInfoString(int idx, int length)
         {
             int Max = Math.Min(idx + length, strInfo.LengthInTextElements);
@@ -494,7 +516,7 @@ namespace MCCompilerConsole.Converter
         /// <summary>
         /// 次の文字に進む
         /// </summary>
-        /// <param name="next"></param>
+        /// <param name="next">進む文字数</param>
         protected void NextStrInfo(int next)
         {
             string str = GetStrInfoString(next);
@@ -516,9 +538,7 @@ namespace MCCompilerConsole.Converter
         /// <summary>
         /// エラートークンの取得
         /// </summary>
-        /// <param name="source"></param>
-        /// <param name="idx"></param>
-        /// <returns></returns>
+        /// <returns>エラートークン</returns>
         protected string GetErrorToken()
         {
             string str = GetStrInfoStringOne();
@@ -536,21 +556,6 @@ namespace MCCompilerConsole.Converter
             return str;
 
         }
-
-        ///// <summary>
-        ///// トークナイズのエラー
-        ///// </summary>
-        ///// <param name="str">エラー内容</param>
-        ///// <param name="strIdx">トークンのソース内インデックス</param>
-        ///// <param name="strLen">トークンの文字数</param>
-        //private void Error(string str, int strIdx, int strLen)
-        //{
-        //    (string linestr, int lineno) = Generic.GetaSourceLineStrNo(ca.Source, strIdx, strLen);
-        //    result.Log = result.Log + (result.Log.Length > 0 ? "\n" : "") + ca.ErrorData.Str(ERROR_TEXT.ERROR_BASE_FILENAME_LINENO, ca.File, $"{lineno:d4}", linestr, str);
-        //    result.Success = false;
-        //    isError = true;
-        //    return;
-        //}
 
         /// <summary>
         /// 初期化処理

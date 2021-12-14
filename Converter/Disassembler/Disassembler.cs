@@ -31,8 +31,8 @@ namespace MCCompilerConsole.Converter
         /// <summary>
         /// ニーモニック後のスペース取得
         /// </summary>
-        /// <param name="mnemonic"></param>
-        /// <returns></returns>
+        /// <param name="mnemonic">ニーモニック</param>
+        /// <returns>スペース</returns>
         private string GetSpaceAfterMnemonic(Mnemonic mnemonic)
         {
             int spaceNum = mnemonicStrLengthMax - mnemonic.ToString().Length;
@@ -42,8 +42,8 @@ namespace MCCompilerConsole.Converter
         /// <summary>
         /// オペランド後のスペース取得
         /// </summary>
-        /// <param name="operand"></param>
-        /// <returns></returns>
+        /// <param name="operand">オペランド</param>
+        /// <returns>スペース</returns>
         private string GetSpaceAfterOperand(Operand operand)
         {
             int spaceNum = operandStrLengthMax - operand.ToString().Length;
@@ -380,6 +380,10 @@ namespace MCCompilerConsole.Converter
             return true;
         }
 
+        /// <summary>
+        /// プリプロセス
+        /// </summary>
+        /// <param name="filename">実行するファイル</param>
         private void Preprocess(string filename)
         {
             string directory = Path.GetDirectoryName(filename);
