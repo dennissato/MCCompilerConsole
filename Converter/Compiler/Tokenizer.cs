@@ -72,7 +72,7 @@ namespace MCCompilerConsole.Converter.Compiler
         private bool IsNotIdentChar(string str) { return isExisArray(NotIdentChar, str); }
         private bool IsAssigneChar(string str) { return isExisArray(AssigneChar, str); }
 
-        private bool BuiltinCallDelimiter(string str) { return (IsNotIdentChar(str) || IsAcsiiControlCharacter(str)); }
+        private bool BuiltinCallDelimiter(string str) { return (IsNotIdentChar(str) || IsControlOrSpace(str)); }
 
         private Compailer.CompileArgs ca;   // コンパイルの引数
 

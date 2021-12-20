@@ -271,7 +271,7 @@ namespace MCCompilerConsole.Converter.Assembler
 
                 // 予約語(大文字)
                 {
-                    int reserve = GetReserveWords(ReserveWord, IsAcsiiControlCharacter);
+                    int reserve = GetReserveWords(ReserveWord, IsControlOrSpace);
                     if (reserve != -1)
                     {
                         // システムコールと完全一致
@@ -284,7 +284,7 @@ namespace MCCompilerConsole.Converter.Assembler
                 }
                 // 予約語(小文字)
                 {
-                    int reserve = GetReserveWords(ReserveWordLower, IsAcsiiControlCharacter);
+                    int reserve = GetReserveWords(ReserveWordLower, IsControlOrSpace);
                     if (reserve != -1)
                     {
                         // システムコールと完全一致
@@ -298,7 +298,7 @@ namespace MCCompilerConsole.Converter.Assembler
 
                 // 予約語(プリプロセッサー)
                 {
-                    int preprocess = GetReserveWords(PreprocessorWord, IsAcsiiControlCharacter);
+                    int preprocess = GetReserveWords(PreprocessorWord, IsControlOrSpace);
                     if (preprocess != -1)
                     {
                         // システムコールと完全一致
@@ -390,12 +390,12 @@ namespace MCCompilerConsole.Converter.Assembler
         /// <returns>識別子の文字数</returns>
         private AsmToken GetLabel(string str)
         {
-            if(!IsAcsiiControlCharacter(str))
+            if(!IsControlOrSpace(str))
             {
                 AsmToken token = NewToken((int)AsmTokenKind.LABEL, sourceIdx, 0) as AsmToken;
                 int strLen = 0;
                 str = GetStrInfoStringOne();
-                while (!IsAcsiiControlCharacter(str) && str != ":" && str != "")
+                while (!IsControlOrSpace(str) && str != ":" && str != "")
                 {
                     strLen += GetStrByteLength(str);
                     NextStrInfo(1);

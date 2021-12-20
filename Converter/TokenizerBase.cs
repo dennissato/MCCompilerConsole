@@ -117,12 +117,6 @@ namespace MCCompilerConsole.Converter
             "\n", "\r", "\r\n"
         };
 
-        static private readonly string[] AsciiControlCharacter =
-        {
-            ((char)0x09).ToString(), ((char)0x0a).ToString(), ((char)0x0b).ToString(),
-            ((char)0x0c).ToString(), ((char)0x0d).ToString(), ((char)0x20).ToString(),
-        };
-
         protected bool isExisArray(string[] array, string str)
         {
             foreach (var s in array)
@@ -134,6 +128,13 @@ namespace MCCompilerConsole.Converter
             }
             return false;
         }
+
+        private bool isUnicodeCategory(UnicodeCategory uc, string str)
+        {
+            UnicodeCategory _uc = CharUnicodeInfo.GetUnicodeCategory(str, 0);
+            return _uc == uc;
+        }
+
         protected bool IsNumerices(string str) { return isExisArray(Numerices, str); }
         protected bool IsAvailableNumricesCharacter(string str) { return isExisArray(AvailableNumricesCharacter, str); }
         protected bool IsBinaryNumber(string str) { return isExisArray(BinaryNumbers, str); }
@@ -141,7 +142,14 @@ namespace MCCompilerConsole.Converter
         protected bool IsHexadecimalNumber(string str) { return isExisArray(HexadecimalNumbers, str); }
         protected bool IsFloatNumbers(string str) { return isExisArray(FloatNumbers, str); }
         protected bool IsNewLine(string str) { return isExisArray(NewLine, str); }
-        protected bool IsAcsiiControlCharacter(string str) { return isExisArray(AsciiControlCharacter, str); }
+        protected bool IsControlOrSpace(string str) { return IsControl(str) || IsUnicodeSpace(str); }
+        protected bool IsControl(string str) { return isUnicodeCategory(UnicodeCategory.Control, str); }
+        protected bool IsUnicodeSpace(string str)
+        {
+            return isUnicodeCategory(UnicodeCategory.SpaceSeparator, str)
+                || isUnicodeCategory(UnicodeCategory.LineSeparator, str)
+                || isUnicodeCategory(UnicodeCategory.ParagraphSeparator, str);
+        }
 
         protected delegate bool Delimiter(string str);
 
@@ -330,7 +338,7 @@ namespace MCCompilerConsole.Converter
         protected bool SkipSpaceControlChar(string str)
         {
             // 空白・制御・改行文字はスキップする
-            if (IsAcsiiControlCharacter(str) || IsNewLine(str))
+            if (IsControlOrSpace(str) || IsNewLine(str))
             {
                 NextStrInfo(1);
                 return true;
@@ -420,7 +428,7 @@ namespace MCCompilerConsole.Converter
                 int strLen = 0;
                 {
                     str = GetStrInfoStringOne();
-                    while (!IsAcsiiControlCharacter(str) && !delimiter(str) && str != "")
+                    while (!IsControlOrSpace(str) && !delimiter(str) && str != "")
                     {
                         strLen += GetStrByteLength(str);
                         NextStrInfo(1);
@@ -545,7 +553,7 @@ namespace MCCompilerConsole.Converter
             while (str != "")
             {
                 // 空白文字はスキップする
-                if (IsAcsiiControlCharacter(str))
+                if (IsControlOrSpace(str))
                 {
                     NextStrInfo(1);
                     str = GetStrInfoStringOne();
