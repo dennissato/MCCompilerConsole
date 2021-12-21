@@ -1750,10 +1750,6 @@ namespace MCCompilerConsole.Converter.Compiler
                         return NewBinary(NodeKind.SUB, NewNum(0), node);
                     }
                 }
-                else if (Consum("&"))
-                {
-                    return NewBinary(NodeKind.ADDR, Unary(), null);
-                }
                 return Primary();
             }
         }
@@ -2591,18 +2587,20 @@ namespace MCCompilerConsole.Converter.Compiler
                         if (isReference && !isDerefe)
                         {
                             // ref変数の中身のアドレス
-                            variNode = NewBinary(NodeKind.REF_ADDR, variNode, null);
+                            variNode = NewBinary(NodeKind.REF_ADDR, variNode, null);    // refの中身のアドレス
                         }
                         else if (!isReference && isDerefe)
                         {
                             // 変数のアドレスにoffsetを足したアドレス
-                            variNode = NewBinary(NodeKind.ADD, variNode, offsetNode);   // アドレスの計算
+                            variNode = NewBinary(NodeKind.ADD, variNode, offsetNode);   // offsetの計算
+                            variNode = NewBinary(NodeKind.ADDR, variNode, null);        // アドレス取得
                         }
                         else
                         {
                             // ref変数の中身のアドレスにoffsetを足したアドレス
-                            variNode = NewBinary(NodeKind.REF_ADDR, variNode, null);
-                            variNode = NewBinary(NodeKind.ADD, variNode, offsetNode);   // アドレスの計算
+                            variNode = NewBinary(NodeKind.REF_ADDR, variNode, null);    // refの中身のアドレス
+                            variNode = NewBinary(NodeKind.ADD, variNode, offsetNode);   // offsetの計算
+                            variNode = NewBinary(NodeKind.ADDR, variNode, null);        // アドレス取得
                         }
                         variNode.ValType = readVt;
                     }

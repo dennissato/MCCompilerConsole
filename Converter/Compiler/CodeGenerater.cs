@@ -990,10 +990,6 @@ namespace MCCompilerConsole.Converter.Compiler
                     }
                     return;
 
-                case NodeKind.ADDR:
-                    GenerateVariable(node.Lhs);
-                    return;
-
                 case NodeKind.DEREFE:
                     GenerateDereference(node.Lhs);
                     WriteCode(Mnemonic.POP, Operand.RI1);
@@ -1002,6 +998,12 @@ namespace MCCompilerConsole.Converter.Compiler
                         WriteCode(Mnemonic.MOV, GetRegister1(vk), Operand.RI1P);
                         WriteCode(Mnemonic.PUSH, GetRegister1(vk));
                     }
+                    return;
+
+                case NodeKind.ADDR:
+                    GenerateDereference(node.Lhs);
+                    WriteCode(Mnemonic.POP, Operand.RI1);
+                    WriteCode(Mnemonic.PUSH, Operand.RI1);
                     return;
 
                 case NodeKind.REF_ADDR:

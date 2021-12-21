@@ -230,8 +230,8 @@ namespace MCCompilerConsole.Converter
         BLOCK,          // { ... }
         FUNC_CALL,      // call function
         FUNC_DEF,       // 関数定義
-        ADDR,           // & アドレス
-        DEREFE,         // * ポインタ
+        DEREFE,         // デリファレンス
+        ADDR,           // アドレス
         REF_ADDR,       // ref変数の中身取得
         STMT_EXPR,      // statement内のexpression
         GWST_CALL,      // システムコール的なもの

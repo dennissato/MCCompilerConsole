@@ -486,6 +486,25 @@ namespace MCCompilerConsole.Converter
         /// <returns>引数</returns>
         static public VariableKind[] GwstCallRefArgInfo(GWSTType type, int no)
         {
+            // 共有部分
+            switch (type)
+            {
+
+                case GWSTType.gwst_mag:
+                case GWSTType.gwst_smag:
+                case GWSTType.gwst_wamag:
+                    GWSTCallMag magNo = (GWSTCallMag)no;
+                    foreach (var mag in GWSTCallRefArgInfoMag)
+                    {
+                        if (mag.GwstCall == magNo)
+                        {
+                            return mag.Kind;
+                        }
+                    }
+                    break;
+            }
+
+            // タイプごと
             switch (type)
             {
                 case GWSTType.gwst_lib:
@@ -495,18 +514,6 @@ namespace MCCompilerConsole.Converter
                         if (lib.GwstCall == libNo)
                         {
                             return lib.Kind;
-                        }
-                    }
-                    break;
-
-
-                case GWSTType.gwst_mag:
-                    GWSTCallMag magNo = (GWSTCallMag)no;
-                    foreach (var mag in GWSTCallRefArgInfoMag)
-                    {
-                        if (mag.GwstCall == magNo)
-                        {
-                            return mag.Kind;
                         }
                     }
                     break;
