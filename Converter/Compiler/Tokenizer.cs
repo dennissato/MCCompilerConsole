@@ -61,7 +61,7 @@ namespace MCCompilerConsole.Converter.Compiler
 
         static private readonly string[] NotIdentChar =
         {
-            "+", "-", "*", "/", "(", ")", "[", "]", "{", "}", ";", ":", ".", ",", "<", ">", "=", "&",
+            "+", "-", "*", "/", "%", "(", ")", "[", "]", "{", "}", ";", ":", ".", ",", "<", ">", "=", "&",
         };
 
         static private readonly string[] AssigneChar =

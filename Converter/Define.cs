@@ -200,6 +200,7 @@ namespace MCCompilerConsole.Converter
         SUB,            // -
         MUL,            // *
         DIV,            // /
+        DIV_Extra,      // %
         EQ,             // ==
         NE,             // !=
         LT,             // <

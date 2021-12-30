@@ -1520,6 +1520,19 @@ namespace MCCompilerConsole.Converter.Compiler
                 ExpectAssign(node, rhsNode);
                 node = NewBinary(NodeKind.ASSIGN, node, NewBinary(NodeKind.DIV, node, rhsNode));
             }
+            else if (Consum("%="))
+            {
+                NodeKind nk = node.GetEndKind();
+                if (nk == NodeKind.STRING)
+                {
+                    Error(ca.ErrorData.Str(ERROR_TEXT.STRING_DIV));
+                    return null;
+                }
+                // nodeは必ず変数である
+                Node rhsNode = Assign();
+                ExpectAssign(node, rhsNode);
+                node = NewBinary(NodeKind.ASSIGN, node, NewBinary(NodeKind.DIV_Extra, node, rhsNode));
+            }
             return node;
         }
 
@@ -1621,7 +1634,7 @@ namespace MCCompilerConsole.Converter.Compiler
         }
 
         /// <summary>
-        /// mul = unary ("*" unary | "/" unary)*
+        /// mul = unary ("*" unary | "/" unary | "%" unary)*
         /// </summary>
         /// <returns></returns>
         private Node Mul()
@@ -1649,6 +1662,16 @@ namespace MCCompilerConsole.Converter.Compiler
                         return null;
                     }
                     node = NewBinary(NodeKind.DIV, node, Unary());
+                }
+                else if (Consum("%"))
+                {
+                    NodeKind nk = node.GetEndKind();
+                    if (nk == NodeKind.STRING)
+                    {
+                        Error(ca.ErrorData.Str(ERROR_TEXT.STRING_DIV));
+                        return null;
+                    }
+                    node = NewBinary(NodeKind.DIV_Extra, node, Unary());
                 }
                 else
                 {

@@ -1116,8 +1116,13 @@ namespace MCCompilerConsole.Converter.Compiler
                     break;
 
                 case NodeKind.DIV:
-                    WriteCode(Mnemonic.IDIV, operand1, operand2); // (商)EAX　(余)EDX
+                    WriteCode(Mnemonic.IDIV, operand1, operand2); // (商)R〇1　(余)R〇2
                     WriteCode(Mnemonic.PUSH, operand1);  //何かしらの結果をスタックのトップに入れておく
+                    break;
+
+                case NodeKind.DIV_Extra:
+                    WriteCode(Mnemonic.IDIV, operand1, operand2); // (商)R〇1　(余)R〇2
+                    WriteCode(Mnemonic.PUSH, operand2);  //何かしらの結果をスタックのトップに入れておく
                     break;
 
                 case NodeKind.EQ:
