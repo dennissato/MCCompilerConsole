@@ -314,8 +314,16 @@ namespace MCCompilerConsole.Converter
         GetCharState,       // キャラクターのステート取得
         GetTargets,         // ターゲットの設定
         InputKey,           // キーが押されたら
-        GetManaPercent,     // マナの存在量取得
-        SetManaPercent,     // マナの存在量移動
+
+        ManaConversion,     // マナの変換
+        GetManaStaysNum,    // マナが留まれるポイント
+        GetManaStaysType,   // マナが留まれるポイントタイプを取得
+        SendMana,           // マナを送る
+        ConfirmMana,        // マナの確認
+        SetMagicSetMyState, // 自分の魔法セットの状態を設定
+        GetMagicSetState,   // 魔法セットの状態を確認
+        SetManaLileState,   // マナの通り道の状態を設定
+        GetManaLileState,   // マナの通り道の状態を取得
 
         Num
     }
@@ -331,6 +339,7 @@ namespace MCCompilerConsole.Converter
         SetForce,           // 魔法への力
         GetPoint,           // 指定位置の取得
         GetReticleFoce,     // レティクル方向の力を取得
+        SetManaUsePoint,    // マナの使用位置を指定
 
         Num
     }

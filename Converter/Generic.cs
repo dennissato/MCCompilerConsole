@@ -221,6 +221,7 @@ namespace MCCompilerConsole.Converter
         static private readonly NodeKind[] ARG_NONE = { NodeKind.Other };
         static private readonly NodeKind[] ARG_INT = { NodeKind.INTEGER, };
         static private readonly NodeKind[] ARG_INT_INT = { NodeKind.INTEGER, NodeKind.INTEGER, };
+        static private readonly NodeKind[] ARG_INT_INT_INT_INT = { NodeKind.INTEGER, NodeKind.INTEGER, NodeKind.INTEGER, NodeKind.INTEGER, };
         static private readonly NodeKind[] ARG_INT_FLOAT_ADDR_INT = { NodeKind.INTEGER, NodeKind.FLOAT, NodeKind.ADDR, NodeKind.INTEGER };
         static private readonly NodeKind[] ARG_STRING = { NodeKind.STRING };
         static private readonly NodeKind[] ARG_STRING_INT = { NodeKind.STRING, NodeKind.INTEGER };
@@ -230,26 +231,35 @@ namespace MCCompilerConsole.Converter
         static private readonly NodeKind[] ARG_INT_ADDR = { NodeKind.INTEGER, NodeKind.ADDR };
         static private readonly (int gwstcall, VariableKind RetType, NodeKind[] ArgKinds)[] GWSTCallInfoLib =
         {
-            ((int)GWSTCallLib.ChangeMagicConfig,VariableKind.VOID, ARG_STRING_INT),
-            ((int)GWSTCallLib.GetDeltaTime,    VariableKind.FLOAT, ARG_NONE),
-            ((int)GWSTCallLib.GetCharState,    VariableKind.VOID,  ARG_ADDR),
-            ((int)GWSTCallLib.GetTargets,      VariableKind.INT,   ARG_INT_FLOAT_ADDR_INT),
-            ((int)GWSTCallLib.InputKey,        VariableKind.INT,   ARG_INT_INT),
-            ((int)GWSTCallLib.GetManaPercent,  VariableKind.VOID,  ARG_ADDR),
-            ((int)GWSTCallLib.SetManaPercent,  VariableKind.VOID,  ARG_ADDR),
+            ((int)GWSTCallLib.ChangeMagicConfig,    VariableKind.VOID, ARG_STRING_INT),
+            ((int)GWSTCallLib.GetDeltaTime,         VariableKind.FLOAT,ARG_NONE),
+            ((int)GWSTCallLib.GetCharState,         VariableKind.VOID, ARG_ADDR),
+            ((int)GWSTCallLib.GetTargets,           VariableKind.INT,  ARG_INT_FLOAT_ADDR_INT),
+            ((int)GWSTCallLib.InputKey,             VariableKind.INT,  ARG_INT_INT),
+            ((int)GWSTCallLib.ManaConversion,       VariableKind.VOID, ARG_INT_INT),
+            ((int)GWSTCallLib.GetManaStaysNum,      VariableKind.INT,  ARG_NONE),
+            ((int)GWSTCallLib.GetManaStaysType,     VariableKind.INT,  ARG_NONE),
+            ((int)GWSTCallLib.SendMana,             VariableKind.VOID, ARG_INT_INT_INT_INT),
+            ((int)GWSTCallLib.ConfirmMana,          VariableKind.INT,  ARG_INT),
+            ((int)GWSTCallLib.SetMagicSetMyState,   VariableKind.VOID, ARG_INT),
+            ((int)GWSTCallLib.GetMagicSetState,     VariableKind.INT,  ARG_STRING),
+            ((int)GWSTCallLib.SetManaLileState,     VariableKind.VOID, ARG_INT_INT),
+            ((int)GWSTCallLib.GetManaLileState,     VariableKind.INT,  ARG_INT_INT),
+
         };
         static private readonly (int gwstcall, VariableKind RetType, NodeKind[] ArgKinds)[] GWSTCallInfoMag =
         {
-            ((int)GWSTCallMag.Entity,        VariableKind.VOID, ARG_NONE),
-            ((int)GWSTCallMag.GetEntityId,   VariableKind.VOID, ARG_ADDR),
-            ((int)GWSTCallMag.SpecifyEntity, VariableKind.VOID, ARG_ADDR),
-            ((int)GWSTCallMag.SetAttribute,  VariableKind.VOID, ARG_INT),
-            ((int)GWSTCallMag.SetDestroyTime,VariableKind.VOID, ARG_FLOAT),
-            ((int)GWSTCallMag.SetScale,      VariableKind.VOID, ARG_FLOAT3),
-            ((int)GWSTCallMag.SetPosition,   VariableKind.VOID, ARG_FLOAT3),
-            ((int)GWSTCallMag.GetPoint,      VariableKind.VOID, ARG_INT_ADDR),
-            ((int)GWSTCallMag.SetForce,      VariableKind.VOID, ARG_FLOAT3),
-            ((int)GWSTCallMag.GetReticleFoce,VariableKind.VOID, ARG_ADDR),
+            ((int)GWSTCallMag.Entity,           VariableKind.VOID, ARG_NONE),
+            ((int)GWSTCallMag.GetEntityId,      VariableKind.VOID, ARG_ADDR),
+            ((int)GWSTCallMag.SpecifyEntity,    VariableKind.VOID, ARG_ADDR),
+            ((int)GWSTCallMag.SetAttribute,     VariableKind.VOID, ARG_INT),
+            ((int)GWSTCallMag.SetDestroyTime,   VariableKind.VOID, ARG_FLOAT),
+            ((int)GWSTCallMag.SetScale,         VariableKind.VOID, ARG_FLOAT3),
+            ((int)GWSTCallMag.SetPosition,      VariableKind.VOID, ARG_FLOAT3),
+            ((int)GWSTCallMag.GetPoint,         VariableKind.VOID, ARG_INT_ADDR),
+            ((int)GWSTCallMag.SetForce,         VariableKind.VOID, ARG_FLOAT3),
+            ((int)GWSTCallMag.GetReticleFoce,   VariableKind.VOID, ARG_ADDR),
+            ((int)GWSTCallMag.SetManaUsePoint,  VariableKind.VOID, ARG_INT),
         };
         static private readonly (int gwstcall, VariableKind RetType, NodeKind[] ArgKinds)[] GWSTCallInfoSMag =
         {
@@ -290,12 +300,6 @@ namespace MCCompilerConsole.Converter
             VariableKind.FLOAT,VariableKind.FLOAT,VariableKind.FLOAT,VariableKind.FLOAT,VariableKind.FLOAT,
             VariableKind.FLOAT,VariableKind.FLOAT,VariableKind.FLOAT,VariableKind.FLOAT,VariableKind.FLOAT,
         };
-        static private readonly VariableKind[] ARG_MANAS = {
-            VariableKind.INT, VariableKind.INT, VariableKind.INT, VariableKind.INT, VariableKind.INT,
-            VariableKind.INT, VariableKind.INT, VariableKind.INT, VariableKind.INT, VariableKind.INT,
-            VariableKind.INT, VariableKind.INT, VariableKind.INT, VariableKind.INT, VariableKind.INT,
-            VariableKind.INT, VariableKind.INT,
-        };
         static private readonly VariableKind[] ARG_GETTARGETS ={
             VariableKind.INT,
         };
@@ -318,8 +322,6 @@ namespace MCCompilerConsole.Converter
         {
             (GWSTCallLib.GetCharState, ARG_CHARSTATE),
             (GWSTCallLib.GetTargets, ARG_GETTARGETS),
-            (GWSTCallLib.GetManaPercent, ARG_MANAS),
-            (GWSTCallLib.SetManaPercent, ARG_MANAS),
         };
         static private readonly (GWSTCallMag GwstCall, VariableKind[] Kind)[] GWSTCallRefArgInfoMag =
         {
