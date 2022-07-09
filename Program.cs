@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text.Json;
 using MCCompilerConsole.Converter;
 using MCCompilerConsole.Converter.Compiler;
 using MCCompilerConsole.Converter.Assembler;
@@ -49,23 +50,75 @@ namespace MCCompilerConsole
             Invalid
         }
 
+#if DEBUG
+        public class DebugArg
+        {
+            public string ExecutionDirectory { get; set; }
+            public string SourceFileName { get; set; }
+            public string LogFile { get; set; }
+            public string Language { get; set; }
+            public string Release { get; set; }
+            public string CompileMCASDir { get; set; }
+            public string CompileMCBINDir { get; set; }
+            public string CompileMCDir { get; set; }
+            public string AssembleMCBINDir { get; set; }
+            public string AssembleMCDir { get; set; }
+        }
+#endif
+
         static void Main(string[] args)
         {
+            string direcotory;
+            string sourceFile;
+            string logFile;
+            string language;
+            string releasedebug;
+            string compilemcasDir;
+            string compilemcbinDir;
+            string compilemcDir;
+            string assemblebinDir;
+            string assemblemcDir;
+#if DEBUG
+            //　外部ファイルの読み実行
+            string filePath = new DirectoryInfo(System.AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName + "\\debug_config.json";
+            DebugArg debugArg = null;
+            using (StreamReader sr = new StreamReader(filePath, false))
+            {
+                string json_str = sr.ReadToEnd();
+                debugArg = JsonSerializer.Deserialize<DebugArg>(json_str);
+            }
+            if (debugArg == null)
+            {
+                return;
+            }
+            direcotory = debugArg.ExecutionDirectory;
+            sourceFile = debugArg.SourceFileName;
+            logFile = debugArg.LogFile;
+            language = debugArg.Language;
+            releasedebug = debugArg.Release;
+            compilemcasDir = debugArg.CompileMCASDir;
+            compilemcbinDir = debugArg.CompileMCBINDir;
+            compilemcDir = debugArg.CompileMCDir;
+            assemblebinDir = debugArg.AssembleMCBINDir;
+            assemblemcDir = debugArg.AssembleMCDir;
+#else
+
             if (args.Length < (int)Arguments.MinArgNum)
             {
                 return;
             }
-
-            string direcotory = args.Length > (int)Arguments.ExecutionDirectory ? args[(int)Arguments.ExecutionDirectory] : "";
-            string sourceFile = args.Length > (int)Arguments.SourceFileName ? args[(int)Arguments.SourceFileName] : "";
-            string logFile = args.Length > (int)Arguments.LogFile ? args[(int)Arguments.LogFile] : "";
-            string language = args.Length > (int)Arguments.Language ? args[(int)Arguments.Language] : "";
-            string releasedebug = args.Length > (int)Arguments.ReleaseDebug ? args[(int)Arguments.ReleaseDebug] : "";
-            string compilemcasDir = args.Length > (int)Arguments.CompileMCASDir ? args[(int)Arguments.CompileMCASDir] : "";
-            string compilemcbinDir = args.Length > (int)Arguments.CompileMCBINDir ? args[(int)Arguments.CompileMCBINDir] : "";
-            string compilemcDir = args.Length > (int)Arguments.CompileMCDir ? args[(int)Arguments.CompileMCDir] : "";
-            string assemblebinDir = args.Length > (int)Arguments.AssembleMCBINDir ? args[(int)Arguments.AssembleMCBINDir] : "";
-            string assemblemcDir = args.Length > (int)Arguments.AssembleMCDir ? args[(int)Arguments.AssembleMCDir] : "";
+            
+            direcotory = args.Length > (int)Arguments.ExecutionDirectory ? args[(int)Arguments.ExecutionDirectory] : "";
+            sourceFile = args.Length > (int)Arguments.SourceFileName ? args[(int)Arguments.SourceFileName] : "";
+            logFile = args.Length > (int)Arguments.LogFile ? args[(int)Arguments.LogFile] : "";
+            language = args.Length > (int)Arguments.Language ? args[(int)Arguments.Language] : "";
+            releasedebug = args.Length > (int)Arguments.ReleaseDebug ? args[(int)Arguments.ReleaseDebug] : "";
+            compilemcasDir = args.Length > (int)Arguments.CompileMCASDir ? args[(int)Arguments.CompileMCASDir] : "";
+            compilemcbinDir = args.Length > (int)Arguments.CompileMCBINDir ? args[(int)Arguments.CompileMCBINDir] : "";
+            compilemcDir = args.Length > (int)Arguments.CompileMCDir ? args[(int)Arguments.CompileMCDir] : "";
+            assemblebinDir = args.Length > (int)Arguments.AssembleMCBINDir ? args[(int)Arguments.AssembleMCBINDir] : "";
+            assemblemcDir = args.Length > (int)Arguments.AssembleMCDir ? args[(int)Arguments.AssembleMCDir] : "";
+#endif
 
             // 言語
             Language lang = Language.Invalid;

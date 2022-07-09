@@ -375,13 +375,14 @@ namespace MCCompilerConsole.Converter.Compiler
             {
                 // 参照なのでアドレスさえPUSHできる領域があればよい
                 // つまりPUSH(ZERO_I)だけでよい
-                if(operand == Operand.INVALID)
+                Operand writeOpe = operand == Operand.INVALID ? Operand.ZERO_I : operand;
+                if (isRelease)
                 {
-                    WriteDebugPush(Operand.ZERO_I, dt);
+                    WriteCode(Mnemonic.PUSH, writeOpe);
                 }
                 else
                 {
-                    WriteDebugPush(operand, dt);
+                    WriteDebugPush(writeOpe, dt);
                 }
                 return;
             }

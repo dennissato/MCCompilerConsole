@@ -332,14 +332,13 @@ namespace MCCompilerConsole.Converter
         Entity,             // 現在の設定状態で魔法を実体化
         GetEntityId,        // 実体化した魔法のID取得
         SpecifyEntity,      // 実体の指定
-        SetAttribute,       // 魔法の属性
+        SetUseMana,         // 使用マナの設定
         SetDestroyTime,     // 魔法消滅時間
         SetPosition,        // 魔法出現位置
         SetScale,           // 魔法のサイズ
         SetForce,           // 魔法への力
         GetPoint,           // 指定位置の取得
         GetReticleFoce,     // レティクル方向の力を取得
-        SetManaUsePoint,    // マナの使用位置を指定
 
         Num
     }

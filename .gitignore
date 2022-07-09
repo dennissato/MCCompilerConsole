@@ -365,3 +365,4 @@ FodyWeavers.xsd
 /error_text_compile.xlsm
 /error_text_assemble.xlsm
 /console_text.xlsm
+/debug_config.json
