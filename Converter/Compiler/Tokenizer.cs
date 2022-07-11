@@ -159,14 +159,15 @@ namespace MCCompilerConsole.Converter.Compiler
 
                 // 組み込み関数
                 {
-                    int builtcall = GetReserveWords(BuiltinFunction, BuiltinCallDelimiter);
-                    if (builtcall != -1)
+                    int buildCall = GetReserveWords(BuiltinFunction, BuiltinCallDelimiter);
+                    if (buildCall != -1)
                     {
                         // システムコールと完全一致
                         // 　-> return (予約語) と returnx (ユーザー定義の識別子)とを分けるため
                         // 　-> 予約語の後の文字が識別子を構成する文字ではないことを確認する
-                        currentToken = NewToken(BuiltinFunction[builtcall].kind, sourceIdx, BuiltinFunction[builtcall].word.Length);
-                        NextStrInfo(BuiltinFunction[builtcall].word.Length);
+                        (string word, int kind) buildFunc = BuiltinFunction[buildCall];
+                        currentToken = NewToken(buildFunc.kind, sourceIdx, buildFunc.word.Length);
+                        NextStrInfo(buildFunc.word.Length);
                         continue;
                     }
                 }
@@ -179,10 +180,11 @@ namespace MCCompilerConsole.Converter.Compiler
                         // システムコールと完全一致
                         // 　-> return (予約語) と returnx (ユーザー定義の識別子)とを分けるため
                         // 　-> 予約語の後の文字が識別子を構成する文字ではないことを確認する
-                        Token _currentToken = NewToken((int)TokenKind.SYSTEM, sourceIdx, BuiltinSystemFunction[systemcall].word.Length) as Token;
-                        _currentToken.SysKind = (SystemKind)BuiltinSystemFunction[systemcall].kind;
+                        (string word, int kind) sysFunc = BuiltinSystemFunction[systemcall];
+                        Token _currentToken = NewToken((int)TokenKind.SYSTEM, sourceIdx, sysFunc.word.Length) as Token;
+                        _currentToken.SysKind = (SystemKind)sysFunc.kind;
                         currentToken = _currentToken;
-                        NextStrInfo(BuiltinFunction[systemcall].word.Length);
+                        NextStrInfo(sysFunc.word.Length);
                         continue;
                     }
                 }
