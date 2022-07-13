@@ -309,25 +309,17 @@ namespace MCCompilerConsole.Converter
     }
     public enum GWSTCallLib
     {
-        ChangeMagicConfig,  // コンフィグファイルの切り替え
-        GetDeltaTime,       // 経過時間取得(秒)
-        GetCharState,       // キャラクターのステート取得
-        GetTargets,         // ターゲットの設定
-        InputKey,           // キーが押されたら
+        ChangeMagicSet,  // 魔法セットの切り替え
+        GetDeltaTime,    // 経過時間取得(秒)
+        GetDate,         // 現在の時刻を取得
+        InputKey,        // キーが押されたら
 
-        ManaConversion,     // マナの変換
-        GetManaStaysNum,    // マナが留まれるポイント
-        GetManaStaysType,   // マナが留まれるポイントタイプを取得
-        SendMana,           // マナを送る
-        ConfirmMana,        // マナの確認
         SetMagicSetMyState, // 自分の魔法セットの状態を設定
         GetMagicSetState,   // 魔法セットの状態を確認
-        SetManaLileState,   // マナの通り道の状態を設定
-        GetManaLileState,   // マナの通り道の状態を取得
 
         Num
     }
-    public enum GWSTCallMag
+    public enum GWSTCallMagCommon
     {
         Entity,             // 現在の設定状態で魔法を実体化
         GetEntityId,        // 実体化した魔法のID取得
@@ -339,6 +331,7 @@ namespace MCCompilerConsole.Converter
         SetForce,           // 魔法への力
         GetPoint,           // 指定位置の取得
         GetReticleFoce,     // レティクル方向の力を取得
+        GetTargets,         // ターゲットの設定
 
         Num
     }
@@ -346,9 +339,9 @@ namespace MCCompilerConsole.Converter
     {
         // GWSTCallMagの部分も指定できるので
         // GWSTCallMagの続きから始める
-        SetContact = GWSTCallMag.Num,   // 魔法の接触タイプ
-        SetContactReaction,             // 魔法接触時の反応
-        SetShape,                       // 魔法の形
+        SetContact = GWSTCallMagCommon.Num, // 魔法の接触タイプ
+        SetContactReaction,                 // 魔法接触時の反応
+        SetShape,                           // 魔法の形
 
         // TODO
         //AddMana,            // 魔法にマナを加える
@@ -367,6 +360,16 @@ namespace MCCompilerConsole.Converter
     }
     public enum GWSTCallMeph
     {
+        GetCharState,       // キャラクターのステート取得
+
+        ManaConversion,     // マナの変換
+        GetManaStaysNum,    // マナが留まれるポイント
+        GetManaStaysType,   // マナが留まれるポイントタイプを取得
+        SendMana,           // マナを送る
+        ConfirmMana,        // マナの確認
+        SetManaLileState,   // マナの通り道の状態を設定
+        GetManaLileState,   // マナの通り道の状態を取得
+
         Reflect,            // 現在の状態を反映
         SetForce,           // 自らの肉体に力を加える
         SetAntigravity,     // 反重力
@@ -377,8 +380,8 @@ namespace MCCompilerConsole.Converter
     {
         // GWSTCallMagの部分も指定できるので
         // GWSTCallMagの続きから始める
-        SetDisChargeType = GWSTCallMag.Num, // 放出タイプを設定
-        SetEulerAngle,                      // オイラーアングルの設定
+        SetDisChargeType = GWSTCallMagCommon.Num,   // 放出タイプを設定
+        SetEulerAngle,                              // オイラーアングルの設定
 
         Num
     }
