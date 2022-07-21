@@ -41,7 +41,7 @@ namespace MCCompilerConsole.Converter.Compiler
         static private readonly (string word, int kind)[] BuiltinFunction =
         {
             ("gwst.lib",(int)TokenKind.GWST_LIB),
-            ("gwst.mag",(int)TokenKind.GWST_MAG),
+            //("gwst.mag",(int)TokenKind.GWST_MAG), // TODO MagicCodeでは呼び出しを中止。紛らわしいため。
             ("gwst.smag",(int)TokenKind.GWST_SMAG),
             ("gwst.ui",(int)TokenKind.GWST_UI),
             ("gwst.meph",(int)TokenKind.GWST_MEPH),
